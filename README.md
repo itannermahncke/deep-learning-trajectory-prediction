@@ -9,7 +9,7 @@
 
 ### Motivation
 
-
+Lily Wei: My goal for the project is to gain more experience with the full ML pipeline from data processing to model evaluation and parameter tuning. Instead of just focusing on model performance, I want to hone in on the process of model selection, training, and hyperparameter tuning.
 
 ## Deliverables
 
