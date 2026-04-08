@@ -15,10 +15,9 @@
 
 
 
-
 ## Deliverables
 
-As a final deliverable for this project, I plan to write a final report on my learning that includes the following components:
+As a final deliverable for this project, we plan to write a final report on our learning that includes the following components:
 
 ### (Context) Necessity of Trajectory Prediction for Aircraft
 
@@ -42,7 +41,7 @@ As a final deliverable for this project, I plan to write a final report on my le
 
 ## Timeline
 
-We will commit to the following timeline for my project, given that we have 4 weeks to complete it.
+We will commit to the following timeline for this project, given that we have 4 weeks to complete it.
 
 ### Week 1:
 
