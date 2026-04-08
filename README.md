@@ -9,7 +9,7 @@ In this project, we plan to utilize deep learning to predict future trajectories
 
 ### Motivation
 
-
+Lily Wei: My goal for the project is to gain more experience with the full ML pipeline from data processing to model evaluation and parameter tuning. Instead of just focusing on model performance, I want to hone in on the process of model selection, training, and hyperparameter tuning.
 
 ## Deliverables
 
@@ -133,3 +133,7 @@ Baselines: [ADS-B Trajectory Filtering Techniques](https://www.scribd.com/docume
 Baselines/Preprocessing: [Python Aircraft Data Preprocessing Library](https://github.com/xoolive/traffic) \
 Data: [OpenSky: A large-scale ADS-B sensor network for research](https://ieeexplore.ieee.org/document/6846743) \
 Data: [ADS-B Exchange: Unfiltered Flight Data](https://www.adsbexchange.com/) \
+
+### Implementation
+
+RNN vs LSTM vs GRU vs Transformers: https://www.geeksforgeeks.org/deep-learning/rnn-vs-lstm-vs-gru-vs-transformers/
