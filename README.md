@@ -7,11 +7,7 @@
 
 
 
-
-
 ### Motivation
-
-
 
 
 
@@ -45,19 +41,62 @@ We will commit to the following timeline for this project, given that we have 4 
 
 ### Week 1:
 
-
+- Model(s) Selection
+    - Decide what to investigate and evaluate
+    - Current list to pare down:
+        - RNNs/LSTMs
+        - Transformers
+        - CRNNs
+        - GRUs
+- Gather Datasets
+    - paring them down to specific scenarios (how generalizable?)
+    - standardizing them with same columns and features
+    - consider aircraft types (fixed-wing, drone, helicopter)
+- Proof-Of-Concept Trial
+    - Try Lily's existing LSTM with minimal modifications
+    - Set up original LSTM if useful
+    - Inform pivot if necessary
+- Document Initial Findings
+    - Write trajectory prediction context in report
+    - Write summary of underlying model theory in report
 
 ### Week 2:
 
-
+- Baseline Establishment
+    - Write a script to implement physical model prediction
+        - Kinematics equations
+        - Kalman Filtering
+    - Plotting code for trajectories
+- Paper Replication
+    - Select papers most relevant to our methods and replicate them
+    - Majority of codebase development happens
+    - Initial trial, compare with physical model
+- Investigate Tuning
+    - Outline tunable hyperparameters and perform parameter sweeps
+    - Research modifications to baseline LSTM
+    - Consider implementing a hybrid model
 
 ### Week 3:
 
-
+- Buffer Week
+    - Going well: implement hybrid model, modify baseline LSTM
+    - Going okay: continue fine-tuning parameters and improving model
+    - Going bad: extra work time, debugging, referencing more papers
 
 ### Week 4:
 
-
+- Code Lock
+- Evaluate Model Performance
+    - Compare accuracy of trajectory over time to baseline methods and ground truth
+    - Investigate and perform other evaluation methods (i.e. prediction time)
+- Visualizations
+    - Loss decay with different model configurations
+    - Trajectory/state plots showing model outputs
+    - More methods of evaluations
+- Deliverables Materials
+    - Clean up and document codebase
+    - Document methodology, performance analysis, future work
+    - Finalize report
 
 ## External Resources
 
