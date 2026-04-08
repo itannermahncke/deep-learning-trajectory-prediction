@@ -133,3 +133,7 @@ Baselines: [ADS-B Trajectory Filtering Techniques](https://www.scribd.com/docume
 Baselines/Preprocessing: [Python Aircraft Data Preprocessing Library](https://github.com/xoolive/traffic) \
 Data: [OpenSky: A large-scale ADS-B sensor network for research](https://ieeexplore.ieee.org/document/6846743) \
 Data: [ADS-B Exchange: Unfiltered Flight Data](https://www.adsbexchange.com/) \
+
+### Implementation
+
+RNN vs LSTM vs GRU vs Transformers: https://www.geeksforgeeks.org/deep-learning/rnn-vs-lstm-vs-gru-vs-transformers/
