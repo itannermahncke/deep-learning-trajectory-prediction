@@ -5,7 +5,7 @@
 
 ### Project Goals
 
-
+In this project, we plan to utilize deep learning to predict future trajectories of aircraft in real-time using their incoming ADS-B flight data. We will investigate Recurrent Neural Networks (RNNs), a type of neural network used for sequential prediction and temporal data, to solve the prediction problem. After training and fine-tuning our model, we will evaluate its performance on masked flight data to the ground truth data, as well as baseline physics and modeling-based methods such as kinematics and Kalman Filtering. Our evaluation standards will be based on contextual information regarding aviation safety. Finally, we will discuss the significance of our model's relative performance in its real-world context and outline possibilities for future development.
 
 ### Motivation
 
@@ -17,23 +17,23 @@ As a final deliverable for this project, we plan to write a final report on our 
 
 ### (Context) Necessity of Trajectory Prediction for Aircraft
 
-
+In this section, we will outline the trajectory prediction problem as it relates to aircraft in several contexts, including airport terminals, open airspace, and low-altitude urban environments. We will consider the utility of trajectory prediction tools for aircraft guidance and autonomous navigation. We will also examine current strategies of performing trajectory prediction, including classical and deep-learning methods. Finally, we will establish performance metrics for solutions to the trajectory prediction problem based on aviation safety standards.
 
 ### (Theory) Summary of Sequential Prediction Models
 
-
+In this section, we will explore the underlying mathematical structure of RNNs and their common expansions, including Convolutional RNNs, Long Short-Term Memory (LSTM) models, and attention-based hybrid models. We will connect the function of these models to the types of models covered in the course, explaining how they are similar and where they differ. Finally, we will connect the models' mathematical structure to the utility required to solve the trajectory prediction problem.
 
 ### (Implementation) Codebase of Model Implementation
 
-
+This section will not be in a written format; instead, this is the codebase containing all of our programatic implementation, training, and evaluation. The codebase will be well-documented, including organized directory folders, function and class docstrings, and in-line comments where useful. Sections of the codebase will be referenced in sections of the report where useful. Alongside the codebase, all images and documents will be hosted in the same repository.
 
 ### (Implementation) Performance Analysis
 
-
+This section will visualize and evaluate the performance of the model's predictions across several types of flight trajectories. The performance will be compared to the ground truth trajectory of the dataset, as well as baseline physics-based prediction methods. We will provide commentary on the model's performance, including the effect of hyperparameter tuning and other algorithm modifications on model performance. Finally, we will evaluate the model's performance in reference to the contextual performance metrics we established on the first section.
 
 ### (Context) Implications of Model Performance and Future Work
 
-
+In this section, we will discuss the implications of our model's performance in a real-world autonomy context. We will consider improvements to the algorithm, or suggest entirely different (including classical) methods for solving the trajectory prediction problem. Finally, we will make a recommendation for the best solution to the trajectory prediction problem for aircraft.
 
 ## Timeline
 
