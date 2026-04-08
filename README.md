@@ -9,6 +9,8 @@ In this project, we plan to utilize deep learning to predict future trajectories
 
 ### Motivation
 
+Ivy Mahncke: My goal for the project is to dig into the application of deep learning to robotic problems. I'm particularly interested in exploring the theory behind sequence prediction as it related to deep learning. Finally, I want to explore a problem that directly compares the performance of a deep learning method and a classical method of an estimation problem.
+
 Lily Wei: My goal for the project is to gain more experience with the full ML pipeline from data processing to model evaluation and parameter tuning. Instead of just focusing on model performance, I want to hone in on the process of model selection, training, and hyperparameter tuning.
 
 ## Deliverables
