@@ -138,4 +138,4 @@ Data: [ADS-B Exchange: Unfiltered Flight Data](https://www.adsbexchange.com/) \
 
 ### Implementation
 
-RNN vs LSTM vs GRU vs Transformers: https://www.geeksforgeeks.org/deep-learning/rnn-vs-lstm-vs-gru-vs-transformers/
+RNN vs LSTM vs GRU vs Transformers: [GeeksForGeeks](https://www.geeksforgeeks.org/deep-learning/rnn-vs-lstm-vs-gru-vs-transformers/) \
