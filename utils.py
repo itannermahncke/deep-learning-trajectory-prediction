@@ -49,7 +49,7 @@ def extract_flight_indices(all_flight_df, csv_name=None):
                 start_idx = None
 
     # flight index dataset
-    flight_index_df = pd.DataFrame(flight_rows)
+    flight_index_df = pd.DataFrame(flight_rows).reset_index()
 
     # save to CSV if desired
     if csv_name is not None:
@@ -80,6 +80,26 @@ def extract_single_flight(
 
     # return the full flight as a DF
     return single_flight
+
+
+def extract_all_flights(
+    all_flight_df,
+    flight_index_df,
+):
+    """
+    Extract each unique flight in a raw dataset as its own DataFrame. Return a list of flights.
+    """
+    flights = []
+    flight_count = len(flight_index_df)
+    for flight_idx in range(0, flight_count):
+        flights.append(
+            extract_single_flight(
+                all_flight_df,
+                flight_index_df,
+                flight_idx,
+            )
+        )
+    return flights
 
 
 def extract_single_transponder(all_flight_df, icao24_code, csv_name=None):
