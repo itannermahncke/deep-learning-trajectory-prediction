@@ -115,29 +115,3 @@ def extract_single_transponder(all_flight_df, icao24_code, csv_name=None):
 
     # return the full dataset as a DF
     return single_code
-
-
-csv_name = "states_2021-05-17-00.csv"
-full_flight_df = pd.read_csv(f"data/raw/{csv_name}")
-flight_index_df = extract_flight_indices(full_flight_df, f"flight_indexes_{csv_name}")
-flight_index_df = pd.read_csv(
-    f"data/flight_indexes/flight_indexes_states_2021-05-17-00.csv"
-)
-flight_index_df = pd.read_csv(
-    f"data/flight_indexes/flight_indexes_states_2021-05-17-00.csv"
-)
-
-desired_flight = 1049
-single_flight = extract_single_flight(
-    full_flight_df,
-    flight_index_df,
-    desired_flight,
-    f"flight{desired_flight}_{csv_name}",
-)
-
-# code = "0d0997"
-# single_code = extract_single_transponder(
-#     full_flight_df,
-#     code,
-#     f"code{code}_{csv_name}",
-# )
