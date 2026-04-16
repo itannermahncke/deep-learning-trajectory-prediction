@@ -15,7 +15,7 @@ default_config = {
     "delta": 0.0005,  # Minimum number validation loss needs to improve by
     "dataset": "",
     "variables": [],
-    "train_size": 0,
+    "train_size": 0.7,
     "input": 0,
     "output": 0,
     "repeat_times": 1,
@@ -39,7 +39,7 @@ sweep_config = {
 }
 
 # Names of the csvs the model will train on
-datasets = ["ahu_mac_1_oa"]
+datasets = ["states_2021-05-17-00"]
 
 # Name of the timestamp column
 timestamp = "Time.stamp"
@@ -51,7 +51,7 @@ def train(config):
         # Initialize the run.
         # Set mode to "disabled" if wandb does not need to be run. Helpful when only needed to test things
 
-        run = wandb.init(config=config, group="mac_1-15", mode="disabled")
+        run = wandb.init(config=config, group="flight-test", mode="online")
 
         # Set config to whatever parameters are chosen for this run based on the sweep_config
         config = wandb.config
@@ -67,11 +67,12 @@ def train(config):
         # Get dataset
         timeseries = pd.read_csv(config["dataset"])
         df = pd.DataFrame(timeseries)
+        print(df)
 
         # Remove any commas in the data
         df = df.applymap(lambda x: x.replace(",", "") if isinstance(x, str) else x)
-        # Remove any columns that contain mostly NA
-        df = df.dropna(thresh=len(df) - 10, axis=1)
+        # # Remove any columns that contain mostly NA
+        # df = df.dropna(thresh=len(df) - 10, axis=1)
         # Remove any rows that contain a null value
         df = df.replace(["Null", "Null value"], np.nan)
         df = df.dropna(axis=0)
@@ -88,7 +89,14 @@ def train(config):
         # df.drop([timestamp], axis=1, inplace=True)
 
         # Get the features the model will be training on
-        variables = df.columns.tolist()
+        variables = [
+            "lat",
+            "lon",
+            "velocity",
+            "heading",
+            "baroaltitude",
+            "geoaltitude",
+        ]
 
         # Updating the values in the config that were previously undefined.
         # This allows it so that the number of features, inputs, and outputs
@@ -97,10 +105,9 @@ def train(config):
             "variables": variables,
             "input": len(variables),
             "output": len(variables),
-            "train_size": int(df.shape[0] * 0.70),
+            # "train_size": int(df.shape[0] * 0.70),
         }
         config.update(new_values, allow_val_change=True)
-
         # Run model pipeline
         pipeline = LSTMPipeline(config, df)
         model = pipeline.run()
@@ -122,6 +129,6 @@ for dataset in datasets:
     # Set sweep ID. New sweep ID for each set of data
     sweep_id = wandb.sweep(sweep_config, project="aircraft-trajectory")
     # Set dataset in config
-    default_config["dataset"] = f"data/{dataset}.csv"
+    default_config["dataset"] = f"data/raw/{dataset}.csv"
     # Run the sweep
     wandb.agent(sweep_id, function=train(sweep_config), count=count)
