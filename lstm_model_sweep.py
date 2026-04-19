@@ -19,20 +19,21 @@ default_config = {
     "input": 0,
     "output": 0,
     "repeat_times": 1,
+    "name": "",
 }
 
 # Enter in whatever parameters. Multiple values in one parameter will make it do it a sweep.
 
 sweep_config = {
-    "method": "grid",  # "grid" will do all combinations while "random" will do random combinations. Set the count variable below for number of random runs.
+    "method": "random",  # "grid" will do all combinations while "random" will do random combinations. Set the count variable below for number of random runs.
     "metric": {"name": "validation_loss", "goal": "minimize"},
     "parameters": {
         "batch_size": {"values": [64]},
-        "look_back": {"values": [50]},
-        "hidden": {"values": [64]},
+        "look_back": {"values": [20, 30, 50]},
+        "hidden": {"values": [192, 256, 320]},
         "layer": {"values": [1]},
-        "dropout": {"values": [0.1]},
-        "learning_rate": {"values": [0.001]},
+        "dropout": {"values": [0.05, 0.1, 0.15]},
+        "learning_rate": {"values": [0.0002, 0.0003, 0.0004]},
         "lambda_l1": {"values": [0.0]},
         "lambda_l2": {"values": [1e-6]},
     },
@@ -51,7 +52,7 @@ def train(config):
         # Initialize the run.
         # Set mode to "disabled" if wandb does not need to be run. Helpful when only needed to test things
 
-        run = wandb.init(config=config, group="flight-test", mode="online")
+        run = wandb.init(config=config, group="initial-sweep", mode="online")
 
         # Set config to whatever parameters are chosen for this run based on the sweep_config
         config = wandb.config
@@ -60,8 +61,7 @@ def train(config):
         config.update(default_config)
 
         # Set run name
-        run_name = f'{config["dataset"]}, {config["look_back"]}, \
-            {config["hidden"]}, {config["layer"]}, {config["learning_rate"]}'
+        run_name = f'lstm-{config["look_back"]}, {config["hidden"]}, {config["layer"]}, {config["learning_rate"]}, {config["dropout"]}'
         run.name = run_name
 
         # Get dataset
@@ -105,7 +105,7 @@ def train(config):
             "variables": variables,
             "input": len(variables),
             "output": len(variables),
-            # "train_size": int(df.shape[0] * 0.70),
+            "name": run_name,
         }
         config.update(new_values, allow_val_change=True)
         # Run model pipeline
@@ -117,7 +117,7 @@ def train(config):
     return train_inner
 
 
-count = 10  # Number of runs the sweep agent goes for
+count = 50  # Number of runs the sweep agent goes for
 
 # Count gets updated to number of all combinations if grid sweep is done
 if sweep_config["method"] == "grid":
@@ -127,7 +127,7 @@ if sweep_config["method"] == "grid":
 
 for dataset in datasets:
     # Set sweep ID. New sweep ID for each set of data
-    sweep_id = wandb.sweep(sweep_config, project="aircraft-trajectory")
+    sweep_id = wandb.sweep(sweep_config, project="aircraft-trajectory-lstm")
     # Set dataset in config
     default_config["dataset"] = f"data/raw/{dataset}.csv"
     # Run the sweep
