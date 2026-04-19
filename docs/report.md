@@ -1,23 +1,31 @@
 # Title
 
-## Intro
+## Intro (What/Why Are We Doing It)
 
-## Methodology
+### Problem Context/Motivation
 
-### 
+### LSTMs
 
-### LSTM
+### Attention Blocks
 
-#### Architecture
+## Methodology (How We Did It)
+
+### Data Collection and Preprocessing
+
+#### OpenSky Sensor Network
+
+### LSTM Model Development
 
 #### Parameter Sweeps
+
+### LSTM-Attention Model Development
 
 - monte carlo sampling
 
 ### LSTM-Attention
 
-## Results
+## Results (How It Went)
 
 ### Pre-Tuned LSTM vs Tuned LSTM
 
-### Tuned LSTM 
+### Tuned LSTM vs LSTM-Attention
