@@ -4,7 +4,11 @@
 
 ### Problem Context/Motivation
 
+(Ivy)
+
 ### LSTMs
+
+(Ivy + Lily)
 
 ### Attention Blocks
 
@@ -14,18 +18,33 @@
 
 #### OpenSky Sensor Network
 
+(Ivy)
+
+#### Data Preprocessing
+
+(Lily)
+
 ### LSTM Model Development
+
+#### Architecture
+
+(Lily)
 
 #### Parameter Sweeps
 
+(Ivy+Lily)
+(needs images)
+
 ### LSTM-Attention Model Development
 
-- monte carlo sampling
 
-### LSTM-Attention
+
 
 ## Results (How It Went)
 
 ### Pre-Tuned LSTM vs Tuned LSTM
+
+(Lily + Ivy)
+(needs images)
 
 ### Tuned LSTM vs LSTM-Attention
