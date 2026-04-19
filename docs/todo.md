@@ -1,0 +1,2 @@
+- feed back model's own predictions to itself during single-flight evaluation
+- save images into report and label them
