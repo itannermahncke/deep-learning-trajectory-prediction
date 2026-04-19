@@ -89,3 +89,58 @@ def plot_aircraft_trajectory(
 
     plt.tight_layout()
     plt.show()
+
+
+def plot_flight_time_distribution(flight_dfs, time_col="time", figsize=(10, 6)):
+    """
+    Plot distribution of total flight times across multiple flights.
+
+    Parameters
+    ----------
+    flight_dfs : list of pandas.DataFrame
+        Each dataframe contains flight data with a time column
+    time_col : str
+        Column name for timestamps (seconds)
+    figsize : tuple
+        Figure size
+    """
+
+    # ---- Compute total flight times ----
+    flight_times = []
+
+    for df in flight_dfs:
+        if len(df) < 2:
+            continue
+
+        t_start = df[time_col].min()
+        t_end = df[time_col].max()
+        flight_times.append(t_end - t_start)
+
+    flight_times = np.array(flight_times) / 60
+
+    # ---- Stats ----
+    mean_val = np.mean(flight_times)
+    median_val = np.median(flight_times)
+    min_val = np.min(flight_times)
+    max_val = np.max(flight_times)
+
+    # ---- Plot ----
+    plt.figure(figsize=figsize)
+    plt.hist(flight_times, bins=20)
+
+    # vertical markers
+    plt.axvline(mean_val, linestyle="--", linewidth=2, label=f"Mean: {mean_val:.1f}s")
+    plt.axvline(
+        median_val, linestyle="-.", linewidth=2, label=f"Median: {median_val:.1f}s"
+    )
+    plt.axvline(min_val, linestyle=":", linewidth=2, label=f"Min: {min_val:.1f}s")
+    plt.axvline(max_val, linestyle=":", linewidth=2, label=f"Max: {max_val:.1f}s")
+
+    # labels
+    plt.xlabel("Flight Time (minutes)")
+    plt.ylabel("Count")
+    plt.title("Distribution of Flight Durations")
+    plt.legend()
+
+    plt.tight_layout()
+    plt.show()
