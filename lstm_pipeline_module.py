@@ -158,7 +158,6 @@ class LSTMPipeline:
             "x_test": torch.tensor(x_seq[split_index:], dtype=torch.float),
             "y_test": torch.tensor(y_seq[split_index:], dtype=torch.float),
         }
-        print(split_data)
         return split_data
 
     def _make_loaders(self):
@@ -299,7 +298,7 @@ class LSTMPipeline:
             tuple: A tuple containing the predictions for the training and testing sets.
         """
         predictions = {"train_loader": [], "test_loader": []}
-        best_model_name = f'{self._hyperparameters["dataset"][13:-4]}-{validation_loss}'
+        best_model_name = f'{validation_loss:.4f}-{self._hyperparameters["name"]}'
         # Load the state of the best model
         self._model.load_state_dict(best_model)
 
