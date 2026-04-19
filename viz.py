@@ -129,12 +129,12 @@ def plot_flight_time_distribution(flight_dfs, time_col="time", figsize=(10, 6)):
     plt.hist(flight_times, bins=20)
 
     # vertical markers
-    plt.axvline(mean_val, linestyle="--", linewidth=2, label=f"Mean: {mean_val:.1f}s")
+    plt.axvline(mean_val, linestyle="--", linewidth=2, label=f"Mean: {mean_val:.1f}min")
     plt.axvline(
-        median_val, linestyle="-.", linewidth=2, label=f"Median: {median_val:.1f}s"
+        median_val, linestyle="-.", linewidth=2, label=f"Median: {median_val:.1f}min"
     )
-    plt.axvline(min_val, linestyle=":", linewidth=2, label=f"Min: {min_val:.1f}s")
-    plt.axvline(max_val, linestyle=":", linewidth=2, label=f"Max: {max_val:.1f}s")
+    plt.axvline(min_val, linestyle=":", linewidth=2, label=f"Min: {min_val:.1f}min")
+    plt.axvline(max_val, linestyle=":", linewidth=2, label=f"Max: {max_val:.1f}min")
 
     # labels
     plt.xlabel("Flight Time (minutes)")
