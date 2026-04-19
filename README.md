@@ -102,6 +102,10 @@ We will commit to the following timeline for this project, given that we have 4 
 
 ## External Resources
 
+## LILY AND IVY READ
+Transformer Only: [ASCENT: Transformer-Based Aircraft Trajectory Prediction in Non-Towered Terminal Airspace](https://arxiv.org/abs/2603.16550) \
+Attention-LSTM: [Attention-LSTM based prediction model for aircraft 4-D trajectory](https://www.nature.com/articles/s41598-022-19794-1) \
+
 ### Existing Research for Replication
 
 #### RNN/LSTM Models
@@ -118,7 +122,6 @@ CRNN-GRU: [4D flight trajectory prediction using a hybrid Deep Learning predicti
 
 #### Transformer-Based Models
 
-Attention-LSTM: [Attention-LSTM based prediction model for aircraft 4-D trajectory](https://www.nature.com/articles/s41598-022-19794-1) \
 [Noise robust aircraft trajectory prediction via autoregressive transformers with hybrid positional encoding](https://www.nature.com/articles/s41598-025-96512-7) \
 Transformer Encoder-LSTM: [A Predictive Aircraft Trajectory Prediction Method Based on Transformer Encoder and LSTM](https://htfhyyg.spacejournal.cn/en/article/doi/10.3969/j.issn.1009-8518.2024.02.016) \
 CRNN-Attention: [A deep learning framework for predicting aircraft trajectories from sparse satellite observations](https://www.nature.com/articles/s41598-025-27064-z) \
