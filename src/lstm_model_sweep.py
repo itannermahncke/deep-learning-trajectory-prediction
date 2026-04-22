@@ -5,7 +5,7 @@ Create an lstm model from a variable in a timeseries
 import pandas as pd
 import numpy as np
 
-from lstm_pipeline_module import LSTMPipeline
+from src.lstm.lstm_pipeline_module import LSTMPipeline
 
 import wandb
 

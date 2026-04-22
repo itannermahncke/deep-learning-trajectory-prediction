@@ -1,16 +1,15 @@
 import pandas as pd
-
-csv = "states_2021-05-17-00.csv"
-df = pd.read_csv(f"data/raw/{csv}")
+import numpy as np
 
 
-def extract_flight_indices(all_flight_df, csv_name=None):
+def extract_flight_indices(all_flight_df, filter=None, csv_name=None):
     """
     Given a 24-hour dataset, extract the start and end indices for each unique flight in the dataset.
     Flights begin and end at the first and last instances of onground=False.
 
     Args:
         all_flight_df (DataFrame): 24-hour dataset, sourced from OpenSky.
+        filter (int): if not None, # of minimum timesteps necessary for inclusion
         csv_name (str): Name of desired CSV output. If left as None, no file is created.
     """
     # prep for index extraction
@@ -30,6 +29,8 @@ def extract_flight_indices(all_flight_df, csv_name=None):
 
         # for each state, determine if it is a starting or ending index, if either
         for i, state in enumerate(states):
+            in_flight = False
+            start_idx = None
             if pd.isna(state):
                 continue
 
@@ -42,11 +43,18 @@ def extract_flight_indices(all_flight_df, csv_name=None):
             elif in_flight and state is True:
                 # save the prior index
                 end_idx = indices[i - 1]
+
+                # is it long enough for filter?
+                if filter is not None:
+                    if (
+                        int(df.loc[start_idx, "time"]) - int(df.loc[end_idx, "time"])
+                        <= filter
+                    ):
+                        continue
+                print("Saving flight")
                 flight_rows.append(
                     {"icao24": icao24, "start": start_idx, "end": end_idx}
                 )
-                in_flight = False
-                start_idx = None
 
     # flight index dataset
     flight_index_df = pd.DataFrame(flight_rows).reset_index()
@@ -115,3 +123,39 @@ def extract_single_transponder(all_flight_df, icao24_code, csv_name=None):
 
     # return the full dataset as a DF
     return single_code
+
+
+def extract_longest_flight(flight_index_df):
+    flight_index_df["time"] = flight_index_df["end"] - flight_index_df["start"]
+    return int(flight_index_df["time"].idxmax())
+
+
+def lookback_sequence(raw_data, lookback_size=100, columns=None):
+    """
+    Given a full raw dataset, drop excess columns and produce a sequence of lookback sections that do not contain flight-to-flight overlap.
+
+    Args:
+        raw_data
+
+    Returns:
+        a list of lookback_size-sized arrays containing sections of single-flight data. Arrays referencing the same flight are offset from the next in sequence are offset by one timestep.
+    """
+    # this object will be returned
+    sequences = []
+    # grab sorted flights
+    all_flights: list[pd.DataFrame] = extract_all_flights(
+        raw_data,
+        extract_flight_indices(raw_data),
+    )
+    for flight in all_flights:
+        flight = flight[columns]
+
+        # skip flights that are too short
+        if len(flight) < lookback_size + 1:
+            continue
+
+        for i in range(len(flight) - lookback_size):
+            seq = flight.iloc[i : i + lookback_size + 1].to_numpy()
+            sequences.append(seq)
+    # return
+    return np.stack(sequences)

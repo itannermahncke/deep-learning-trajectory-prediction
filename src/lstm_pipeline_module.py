@@ -10,10 +10,12 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 
-from lstm_model_class import LSTMModel
-from early_stopper import EarlyStopper
+from src.lstm.lstm_model_class import LSTMModel
+from src.lstm.early_stopper import EarlyStopper
 
 import wandb
+
+import lstm_helpers
 
 
 class LSTMPipeline:
@@ -74,7 +76,7 @@ class LSTMPipeline:
 
         # Logs gradient
         wandb.watch(self._model, self._loaders["criterion"], log="all", log_freq=1)
-        
+
         # Create early stop
         early_stopper = EarlyStopper(
             patience=self._hyperparameters["patience"],
@@ -88,14 +90,14 @@ class LSTMPipeline:
             self._model.train()
             # Begin training model
             training_loss = self._train_model()
-            
+
             # Sets model to evaluation mode
             self._model.eval()
             # With no grad so gradient does not get computed during evaluation
             with torch.no_grad():
                 # Begin evaluating model
                 validation_loss = self._test_model()
-            
+
             # Log training loss, validation loss, and epoch in wandb
             self._log(training_loss, validation_loss, epoch)
 
@@ -120,17 +122,23 @@ class LSTMPipeline:
             dict: A dictionary containing the training and testing sets.
         """
         # Scale dataset
-        data_raw = self._scaler.fit_transform(
+        data_raw = self._timeseries.copy()
+        data_raw[self._hyperparameters["variables"]] = self._scaler.fit_transform(
             self._timeseries[self._hyperparameters["variables"]]
         )
         # Creates sequences based on look back
         # Sequences will look like an array where each index contains the previous
         # look_back amount of data points
         look_back = self._hyperparameters["look_back"]
-        sequences = []
-        for index in range(len(data_raw) - look_back):
-            sequences.append(data_raw[index : index + look_back])
-        sequences = np.array(sequences)
+        # sequences = []
+        # for index in range(len(data_raw) - look_back):
+        #     sequences.append(data_raw[index : index + look_back])
+        # sequences = np.array(sequences)
+        sequences = lstm_helpers.lookback_sequence(
+            data_raw,
+            lookback_size=look_back,
+            columns=self._hyperparameters["variables"],
+        )
 
         # Split sequences into input and expected output
         # x_seq is the input and y_seq is the output
@@ -139,17 +147,17 @@ class LSTMPipeline:
         x_seq, y_seq = sequences[:-1, :-1, :], sequences[1:, -1, :]
 
         # Determine split index
-        train_size = self._hyperparameters["train_size"]
+        train_ratio = self._hyperparameters["train_size"]
+        split_index = int(len(x_seq) * train_ratio)
 
         # Splitting the dataset into training and testing sets and converting to PyTorch tensors
         # x is input, y is expected output
         split_data = {
-            "x_train": torch.tensor(x_seq[:train_size], dtype=torch.float),
-            "y_train": torch.tensor(y_seq[:train_size], dtype=torch.float),
-            "x_test": torch.tensor(x_seq[train_size:], dtype=torch.float),
-            "y_test": torch.tensor(y_seq[train_size:], dtype=torch.float),
+            "x_train": torch.tensor(x_seq[:split_index], dtype=torch.float),
+            "y_train": torch.tensor(y_seq[:split_index], dtype=torch.float),
+            "x_test": torch.tensor(x_seq[split_index:], dtype=torch.float),
+            "y_test": torch.tensor(y_seq[split_index:], dtype=torch.float),
         }
-
         return split_data
 
     def _make_loaders(self):
@@ -249,6 +257,7 @@ class LSTMPipeline:
             x_val = x_val.to(self._device)
             y_val = y_val.to(self._device)
             y_pred = self._model(x_val)  # pylint: disable=not-callable
+            # print(f"{x_val}, {y_val}, {y_pred}")
             loss = self._loaders["criterion"](y_val, y_pred)
             batch_losses.append(loss)
         # Average the losses of the batches
@@ -265,7 +274,7 @@ class LSTMPipeline:
             epoch (int): The current epoch.
         """
         wandb.log(
-            {   
+            {
                 "training_loss": training_loss,
                 "validation_loss": validation_loss,
                 "epoch": epoch,
@@ -289,14 +298,14 @@ class LSTMPipeline:
             tuple: A tuple containing the predictions for the training and testing sets.
         """
         predictions = {"train_loader": [], "test_loader": []}
-        best_model_name = f'{self._hyperparameters["dataset"][5:-4]}-{validation_loss}'
+        best_model_name = f'{validation_loss:.4f}-{self._hyperparameters["name"]}'
         # Load the state of the best model
         self._model.load_state_dict(best_model)
 
         # Save the state of the best model to folder
         torch.save(
             self._model.state_dict(),
-            f"anomaly_detection/best_models/{best_model_name}.pth",
+            f"best_models/{best_model_name}.pth",
         )
 
         # Set model to evaluation mode
@@ -356,7 +365,7 @@ class LSTMPipeline:
         # Each feature will have a plot that shows its predictions for
         # the train data and predictions for the test data
         for i, variable in enumerate(self._hyperparameters["variables"]):
-            train_figure = create_graph(i ,train_pred, y_train, variable, "Train")
+            train_figure = create_graph(i, train_pred, y_train, variable, "Train")
             test_figure = create_graph(i, val_pred, y_test, variable, "Test")
             table = wandb.Table(columns=["plot"])
             table.add_data(wandb.Image(train_figure))
