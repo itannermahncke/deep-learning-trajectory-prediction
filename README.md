@@ -3,106 +3,46 @@
 
 ## Project Overview
 
-### Project Goals
-
 In this project, we plan to utilize deep learning to predict future trajectories of aircraft in real-time using their incoming ADS-B flight data. We will investigate Recurrent Neural Networks (RNNs), a type of neural network used for sequential prediction and temporal data, to solve the prediction problem. After training and fine-tuning our model, we will evaluate its performance on masked flight data to the ground truth data, as well as baseline physics and modeling-based methods such as kinematics and Kalman Filtering. Our evaluation standards will be based on contextual information regarding aviation safety. Finally, we will discuss the significance of our model's relative performance in its real-world context and outline possibilities for future development.
 
-### Motivation
+## Repository Structure
 
-Ivy Mahncke: My goal for the project is to dig into the application of deep learning to robotic problems. I'm particularly interested in exploring the theory behind sequence prediction as it related to deep learning. Finally, I want to explore a problem that directly compares the performance of a deep learning method and a classical method of an estimation problem.
+This repository contains the following files:
 
-Lily Wei: My goal for the project is to gain more experience with the full ML pipeline from data processing to model evaluation and parameter tuning. Instead of just focusing on model performance, I want to hone in on the process of model selection, training, and hyperparameter tuning.
+├── src/
+│   ├── lstm_model_class.py
+│   ├── lstm_pipeline_module.py
+│   ├── lstm_model_sweep.py
+│   ├── early_stopper.py
+│   ├── anomaly_detectors.kt
+├── docs/
+│   ├── images/
+│   ├── proposal.md
+│   ├── report.md
+├── .gitignore
+├── README.md
 
-## Deliverables
+`src/` houses the source code for this project. Here's a quick descriptor of the contents:
 
-As a final deliverable for this project, we plan to write a final report on our learning that includes the following components:
+    `lstm_model_class.py`: implementation of an LSTM neural network
+    `lstm_pipeline_module.py`: script to train an LSTM on a given dataset and hyperparameters
+    `lstm_model_sweep.py`: script to run a parameter sweep of several training sessions for a given LSTM
+    `early_stopper.py`: helper class for halting training upon loss convergence
+    `anomaly_detectors.py`:
+    `utils.py`: helper functions for data preprocessing and LSTM pipeline work
+    `viz.py`: helper functions for data and results visualization
 
-### (Context) Necessity of Trajectory Prediction for Aircraft
+`docs/` houses all documentation of this project. The two important files in here are:
 
-In this section, we will outline the trajectory prediction problem as it relates to aircraft in several contexts, including airport terminals, open airspace, and low-altitude urban environments. We will consider the utility of trajectory prediction tools for aircraft guidance and autonomous navigation. We will also examine current strategies of performing trajectory prediction, including classical and deep-learning methods. Finally, we will establish performance metrics for solutions to the trajectory prediction problem based on aviation safety standards.
+    `proposal.md`: our project proposal! It contains learning goals, planned deliverables, and a project timeline.
+    `report.md`: our final report! It contains background research, methodology, and results, as well as ideas for future work.
 
-### (Theory) Summary of Sequential Prediction Models
 
-In this section, we will explore the underlying mathematical structure of RNNs and their common expansions, including Convolutional RNNs, Long Short-Term Memory (LSTM) models, and attention-based hybrid models. We will connect the function of these models to the types of models covered in the course, explaining how they are similar and where they differ. Finally, we will connect the models' mathematical structure to the utility required to solve the trajectory prediction problem.
+## Live External Resources
 
-### (Implementation) Codebase of Model Implementation
-
-This section will not be in a written format; instead, this is the codebase containing all of our programatic implementation, training, and evaluation. The codebase will be well-documented, including organized directory folders, function and class docstrings, and in-line comments where useful. Sections of the codebase will be referenced in sections of the report where useful. Alongside the codebase, all images and documents will be hosted in the same repository.
-
-### (Implementation) Performance Analysis
-
-This section will visualize and evaluate the performance of the model's predictions across several types of flight trajectories. The performance will be compared to the ground truth trajectory of the dataset, as well as baseline physics-based prediction methods. We will provide commentary on the model's performance, including the effect of hyperparameter tuning and other algorithm modifications on model performance. Finally, we will evaluate the model's performance in reference to the contextual performance metrics we established on the first section.
-
-### (Context) Implications of Model Performance and Future Work
-
-In this section, we will discuss the implications of our model's performance in a real-world autonomy context. We will consider improvements to the algorithm, or suggest entirely different (including classical) methods for solving the trajectory prediction problem. Finally, we will make a recommendation for the best solution to the trajectory prediction problem for aircraft.
-
-## Timeline
-
-We will commit to the following timeline for this project, given that we have 4 weeks to complete it.
-
-### Week 1:
-
-- Model(s) Selection
-    - Decide what to investigate and evaluate
-    - Current list to pare down:
-        - RNNs/LSTMs
-        - Transformers
-        - CRNNs
-        - GRUs
-- Gather Datasets
-    - paring them down to specific scenarios (how generalizable?)
-    - standardizing them with same columns and features
-    - consider aircraft types (fixed-wing, drone, helicopter)
-- Proof-Of-Concept Trial
-    - Try Lily's existing LSTM with minimal modifications
-    - Set up original LSTM if useful
-    - Inform pivot if necessary
-- Document Initial Findings
-    - Write trajectory prediction context in report
-    - Write summary of underlying model theory in report
-
-### Week 2:
-
-- Baseline Establishment
-    - Write a script to implement physical model prediction
-        - Kinematics equations
-        - Kalman Filtering
-    - Plotting code for trajectories
-- Paper Replication
-    - Select papers most relevant to our methods and replicate them
-    - Majority of codebase development happens
-    - Initial trial, compare with physical model
-- Investigate Tuning
-    - Outline tunable hyperparameters and perform parameter sweeps
-    - Research modifications to baseline LSTM
-    - Consider implementing a hybrid model
-
-### Week 3:
-
-- Buffer Week
-    - Going well: implement hybrid model, modify baseline LSTM
-    - Going okay: continue fine-tuning parameters and improving model
-    - Going bad: extra work time, debugging, referencing more papers
-
-### Week 4:
-
-- Code Lock
-- Evaluate Model Performance
-    - Compare accuracy of trajectory over time to baseline methods and ground truth
-    - Investigate and perform other evaluation methods (i.e. prediction time)
-- Visualizations
-    - Loss decay with different model configurations
-    - Trajectory/state plots showing model outputs
-    - More methods of evaluations
-- Deliverables Materials
-    - Clean up and document codebase
-    - Document methodology, performance analysis, future work
-    - Finalize report
-
-## External Resources
-
-## LILY AND IVY READ
+### LILY AND IVY READ
+Bi-Directional LSTM: https://www.nature.com/articles/s41598-023-46914-2
+LSTM on OpenSky Medium Article: https://medium.com/@albertomoccardi/airplane-traffic-prediction-atp-d180c1098027
 Transformer Only: [ASCENT: Transformer-Based Aircraft Trajectory Prediction in Non-Towered Terminal Airspace](https://arxiv.org/abs/2603.16550) \
 Attention-LSTM: [Attention-LSTM based prediction model for aircraft 4-D trajectory](https://www.nature.com/articles/s41598-022-19794-1) \
 
