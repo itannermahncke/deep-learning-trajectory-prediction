@@ -4,11 +4,6 @@
     - try training on latlon only, or maybe altitude only / AKA 1 LSTM per state variable
     - vanillify the LSTM model and see what happens
 
-
-- questions to ask/fixes to make
-    - latlon specifically is super bad, but everything else is fine
-        - change to relative position instead of global?
-
 - what modifications to write
     - bidirectional LSTM?
     - RLSTM?
