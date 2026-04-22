@@ -26,18 +26,18 @@ This repository contains the following files:
 
 `src/` houses the source code for this project. Here's a quick descriptor of the contents:
 
-    `lstm_model_class.py`: implementation of an LSTM neural network
-    `lstm_pipeline_module.py`: script to train an LSTM on a given dataset and hyperparameters
-    `lstm_model_sweep.py`: script to run a parameter sweep of several training sessions for a given LSTM
-    `early_stopper.py`: helper class for halting training upon loss convergence
-    `anomaly_detectors.py`:
-    `utils.py`: helper functions for data preprocessing and LSTM pipeline work
-    `viz.py`: helper functions for data and results visualization
+- `lstm_model_class.py`: implementation of an LSTM neural network
+- `lstm_pipeline_module.py`: script to train an LSTM on a given dataset and hyperparameters
+- `lstm_model_sweep.py`: script to run a parameter sweep of several training sessions for a given LSTM
+- `early_stopper.py`: helper class for halting training upon loss convergence
+- `anomaly_detectors.py`:
+- `utils.py`: helper functions for data preprocessing and LSTM pipeline work
+- `viz.py`: helper functions for data and results visualization
 
 `docs/` houses all documentation of this project. The two important files in here are:
 
-    `proposal.md`: our project proposal! It contains learning goals, planned deliverables, and a project timeline.
-    `report.md`: our final report! It contains background research, methodology, and results, as well as ideas for future work.
+- `proposal.md`: our project proposal! It contains learning goals, planned deliverables, and a project timeline.
+- `report.md`: our final report! It contains background research, methodology, and results, as well as ideas for future work.
 
 
 ## Live External Resources
