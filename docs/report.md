@@ -10,7 +10,7 @@ In this project, we utilize deep learning to predict future trajectories of airc
 
 When you're flying a plane, how do you know where other aircraft are planning to go? In current aircraft systems, answering this question is a highly manual process. Significant time and money is invested in human-managed flight coordination, such as air traffic control, radio communication, and sharing of flight plans. Aircraft also regularly emit Automatic Dependent Surveillance - Broadcast (ADS-B) data, which describe their real-time motion kinematics at a frequent interval. These efforts are all to ensure that pilots can easily predict the intended trajectories of other aircraft in order to avoid a crash.
 
-<img src="images/intro/context_ads-b_viz.png" size="600">
+<img src="images/intro/context_ads-b_viz.png" width="600">
 
 > **Fig 1** Diagram of an aircraft model in flight over time. The listed red values (latitude, longitude, altitude, heading, forward speed, and time) are all values present in an ADS-B data packet.
 

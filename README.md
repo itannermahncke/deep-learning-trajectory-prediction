@@ -9,6 +9,7 @@ In this project, we plan to utilize deep learning to predict future trajectories
 
 This repository contains the following files:
 
+```
 ├── src/
 │   ├── lstm_model_class.py
 │   ├── lstm_pipeline_module.py
@@ -21,6 +22,7 @@ This repository contains the following files:
 │   ├── report.md
 ├── .gitignore
 ├── README.md
+```
 
 `src/` houses the source code for this project. Here's a quick descriptor of the contents:
 
