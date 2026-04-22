@@ -1,5 +1,8 @@
 - tests to run
     - feed back model's own predictions to itself during single-flight evaluation
+    - make latlon relative to origin point
+    - try training on latlon only, or maybe altitude only?
+
 
 - questions to ask/fixes to make
     - latlon specifically is super bad, but everything else is fine
