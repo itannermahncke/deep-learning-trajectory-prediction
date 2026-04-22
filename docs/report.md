@@ -2,21 +2,37 @@
 
 ## Project Overview
 
-## Intro (What/Why Are We Doing It)
+In this project, we utilize deep learning to predict future trajectories of aircraft in real-time using their incoming ADS-B flight data. We first establish the context of aircraft navigation and the necessity of accurate flight prediction methods. Next, we investigate Recurrent Neural Networks (RNNs), a type of neural network used for sequential prediction and temporal data, to solve the prediction problem. After training and fine-tuning our model, we evaluate its performance on masked flight data to the ground truth data, as well as baseline physics and modeling-based methods. Next, we evaluate the addition of an attention block for model performance. Finally, we discuss the significance of our model's relative performance in its real-world context and outline possibilities for future development.
 
-### Problem Context and Motivation
+## Introduction
 
-(Ivy)
+### Context and Motivation for Trajectory Prediction
 
-### How Do LSTMs Work?
+When you're flying a plane, how do you know where other aircraft are planning to go? In current aircraft systems, answering this question is a highly manual process. Significant time and money is invested in human-managed flight coordination, such as air traffic control, radio communication, and sharing of flight plans. Aircraft also regularly emit Automatic Dependent Surveillance - Broadcast (ADS-B) data, which describe their real-time motion kinematics at a frequent interval. These efforts are all to ensure that pilots can easily predict the intended trajectories of other aircraft in order to avoid a crash.
+
+<img src="images/intro/context_ads-b_viz.png" size="600">
+
+> **Fig 1** Diagram of an aircraft model in flight over time. The listed red values (latitude, longitude, altitude, heading, forward speed, and time) are all values present in an ADS-B data packet.
+
+With the rise of autonomous aircraft (also known as unmanned autonomous vehicles, or UAVs), human- and pilot-based communication is no longer sufficient. In particular, due to limited onboard compute power, UAVs could never hope to adapt to all human-based trajectory communication methods. Instead, alternate autonomy tools must be applied to the problem of flight prediction such that UAVs can safely operate alongside humans in open airspace. Existing tracking methods generally utilize ADS-B data to perform classical state estimation for solving the trajectory prediction problem, which involves creating physics-based models for other aircraft, predicting their future states, and updating those predictions with ADS-B data. However, different types of aircraft all require unique physical models, and classical methods of state estimation can be completely blind to sudden or unusual maneuvers performed by pilots.
+
+<img src="images/intro/context_wing_drone.png" width="600">
+
+> **Fig 2** Photograph of a UAV designed by Wing, a delivery drone company.
+
+Deep learning provides a potentially more robust avenue of solving the trajectory prediction problem for UAVs. Neural networks trained on large sums of historical ASD-B flight data can be more capable of predicting the flight maneuvers of different types of aircraft, as well as future maneuvers that are not kinematically obvious. However, a variable deep learning solution must be capable of acknowledging the temporal, sequential nature of flight data -- simple classification models aren't capable of this. Instead, only deep learning techniques capable of sequence prediction are up to the task of solving the trajectory prediction problem. 
+
+With the context of the trajectory prediction problem for UAVs and existing methods of mitigation in mind, we now explore a deep learning-based sequence prediction technique as a potential solution.
+
+### How Does Sequential Deep Learning Work?
 
 #### Intro to Recurrent Neural Networks
 
 Recurrent Neural Networks (RNNs) are a type of neural network capable of predicting future items in a sequence of temporal data. The RNN is made up of layers for each prior input in the sequence. Each layer utilizes a block called a Recurrent Unit, which calculates a "Hidden State" value to propagate information about prior inputs to the layer's own unit. This means that new sequence predictions are informed by all prior values in the given sequence. RNNs also use an identical set of weights and biases for each internal layer, meaning they can train quickly even with large sequences of data or with datasets of varying sizes.
 
-<img src="images/statquest_rnn.png" width="600">
+<img src="images/intro/statquest_rnn.png" width="600">
 
-> Fig. 1 Diagram of an unrolled Recurrent Neural Network predicting a new item in a 2-item sequence of stock prices.
+> **Fig 3** Diagram of an unrolled Recurrent Neural Network predicting a new item in a 2-item sequence of stock prices.
 
 However, the RNN's identical weights lead to a severe problem of RNNs: the vanishing/exploding gradient problem. Essentially, any set of weights will be reapplied to the Hidden State over and over again as the RNN's layers are unrolled. If those weights are greater than 1, the values in the Hidden States will be amplified by said value again and again until they are unreasonably high. Similarly, if those weights are less than 1, the values in the hidden states will shrink until they are near-zero. As a result, RNNs are not a reliable solution for any sequence prediction problems with input sequences greater than a few pieces of data.
 
@@ -26,28 +42,27 @@ Long Short-Term Memory (LSTM) is an extension of the vanilla RNN that eradicates
 
 The first block, the Forget Gate, determines the percentage of the long-term memory that will be kept in the Cell State going forward. This percentage is calculated by applying the sigmoid activation function to a weighted sum of the input value and the Hidden State value, which maps the value to a percentage between 0 and 1. The weights on these values are learned by the network during training.
 
-<img src="images/statquest_lstm_forget.png" width="200">
+<img src="images/intro/statquest_lstm_forget.png" width="200">
 
-> Fig Diagram of the Forget Gate in an LSTM unit, containing a sigmoid function to calculate percentage of long-term memory kept.
+> **Fig 4** Diagram of the Forget Gate in an LSTM unit, containing a sigmoid function to calculate percentage of long-term memory kept.
 
 The second block, the Input Gate, determines what value to add to the long-term memory in the Cell State. This block applies the inverse tangent activation function to a weighted sum of the input value and the Hidden State value, which maps the value to a scale of -1 to 1. This value represents a potential value to add to the long-term memory. The block also utilizes the sigmoid activation function with weights, just like the Forget Gate, to determine how much of that potential value to actually add to the long-term memory. After both functions are run, the final new value is added to the existing long-term memory in the Cell State.
 
-<img src="images/statquest_lstm_input.png" width="400">
+<img src="images/intro/statquest_lstm_input.png" width="400">
 
-> Fig Diagram of the Input Gate in an LSTM unit, containing a tanh function to calculate new long-term memory, as well as a sigmoid function to calculate percentage of new long-term memory kept.
+> **Fig 5** Diagram of the Input Gate in an LSTM unit, containing a tanh function to calculate new long-term memory, as well as a sigmoid function to calculate percentage of new long-term memory kept.
 
 The third and final block, the Output Gate, determines what value to add to the short-term memory in the Hidden State, which is ultimately returned by the LSTM unit as a final value. This block does the same steps as the Input Gate, but instead of using the long-term memory to modify the short-term memory with inverse tangent and sigmoid, it does the reverse. In this way, the long-term memory's stability keeps the short-term memory from exploding and preserves information from earlier timesteps, while the short-term memory is most influenced by training weights and recent input values.
 
-<img src="images/statquest_lstm_output.png" width="600">
+<img src="images/intro/statquest_lstm_output.png" width="600">
 
-> Fig Diagram of the Output Gate in an LSTM unit, containing a tanh function to calculate new short-term memory, as well as a sigmoid function to calculate percentage of new short-term memory kept. The result of the Output Gate is the final output of the LSTM unit.
+> **Fig 6** Diagram of the Output Gate in an LSTM unit, containing a tanh function to calculate new short-term memory, as well as a sigmoid function to calculate percentage of new short-term memory kept. The result of the Output Gate is the final output of the LSTM unit.
 
 In practice, an LSTM-based network would apply the three blocks that make up a single LSTM unit to each item in the given sequence, in order. The resultant output of the final LSTM unit is the prediction for the next item in the sequence. The long-term memory and short-term memory work together to balance old information with new, while also avoiding the vanishing/exploding gradient problem that vanilla RNNs struggle with. As a result, LSTMs are a popular choice for sequence prediction in many contexts.
 
-
 ### Attention Blocks
 
-## Methodology (How We Did It)
+## Methodology
 
 ### Data Collection and Preprocessing
 
