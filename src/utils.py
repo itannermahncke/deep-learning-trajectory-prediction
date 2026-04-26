@@ -29,8 +29,6 @@ def extract_flight_indices(all_flight_df, filter=None, csv_name=None):
 
         # for each state, determine if it is a starting or ending index, if either
         for i, state in enumerate(states):
-            in_flight = False
-            start_idx = None
             if pd.isna(state):
                 continue
 
