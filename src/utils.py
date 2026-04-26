@@ -128,6 +128,21 @@ def extract_longest_flight(flight_index_df):
     return int(flight_index_df["time"].idxmax())
 
 
+def relative_latlon_as_km(df, lat="lat", lon="lon"):
+    df = df.copy()  # avoid mutating original
+
+    lat0 = df[lat].iloc[0]
+    lon0 = df[lon].iloc[0]
+
+    km_per_deg_lat = 111.32
+    km_per_deg_lon = 111.32 * np.cos(np.deg2rad(lat0))
+
+    df["x_km"] = (df[lat] - lon0) * km_per_deg_lon
+    df["y_km"] = (df[lon] - lat0) * km_per_deg_lat
+
+    return df
+
+
 def lookback_sequence(raw_data, lookback_size=100, columns=None):
     """
     Given a full raw dataset, drop excess columns and produce a sequence of lookback sections that do not contain flight-to-flight overlap.
