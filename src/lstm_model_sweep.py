@@ -5,7 +5,7 @@ Create an lstm model from a variable in a timeseries
 import pandas as pd
 import numpy as np
 
-from src.lstm.lstm_pipeline_module import LSTMPipeline
+from lstm_pipeline_module import LSTMPipeline
 
 import wandb
 
@@ -29,11 +29,11 @@ sweep_config = {
     "metric": {"name": "validation_loss", "goal": "minimize"},
     "parameters": {
         "batch_size": {"values": [64]},
-        "look_back": {"values": [20, 30, 50]},
-        "hidden": {"values": [192, 256, 320]},
+        "look_back": {"values": [30]},
+        "hidden": {"values": [192]},
         "layer": {"values": [1]},
-        "dropout": {"values": [0.05, 0.1, 0.15]},
-        "learning_rate": {"values": [0.0002, 0.0003, 0.0004]},
+        "dropout": {"values": [0.15]},
+        "learning_rate": {"values": [0.0002]},
         "lambda_l1": {"values": [0.0]},
         "lambda_l2": {"values": [1e-6]},
     },
@@ -75,7 +75,6 @@ def train(config):
         # df = df.dropna(thresh=len(df) - 10, axis=1)
         # Remove any rows that contain a null value
         df = df.replace(["Null", "Null value"], np.nan)
-        df = df.dropna(axis=0)
 
         # # Add the days of the week columns
         # df[timestamp] = pd.to_datetime(df[timestamp])
@@ -109,6 +108,7 @@ def train(config):
         }
         config.update(new_values, allow_val_change=True)
         # Run model pipeline
+        df = df.dropna(subset=variables)
         pipeline = LSTMPipeline(config, df)
         model = pipeline.run()
 

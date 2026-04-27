@@ -10,12 +10,12 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 
-from src.lstm.lstm_model_class import LSTMModel
-from src.lstm.early_stopper import EarlyStopper
+from lstm_model_class import LSTMModel
+from early_stopper import EarlyStopper
 
 import wandb
 
-import lstm_helpers
+import lstm_helpers as lstm_helpers
 
 
 class LSTMPipeline:

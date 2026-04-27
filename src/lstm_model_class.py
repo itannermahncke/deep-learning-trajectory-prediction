@@ -77,7 +77,6 @@ class LSTMModel(nn.Module):
         h_last_repeated = h_last.unsqueeze(1).repeat(
             1, self.repeat_times, 1
         )  # repeat vector
-
         # LSTM layer 2
         x, (h, _) = self.lstm2(h_last_repeated)
         x = self.dropout2(x)
