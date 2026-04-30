@@ -60,8 +60,6 @@ The third and final block, the Output Gate, determines what value to add to the 
 
 In practice, an LSTM-based network would apply the three blocks that make up a single LSTM unit to each item in the given sequence, in order. The resultant output of the final LSTM unit is the prediction for the next item in the sequence. The long-term memory and short-term memory work together to balance old information with new, while also avoiding the vanishing/exploding gradient problem that vanilla RNNs struggle with. As a result, LSTMs are a popular choice for sequence prediction in many contexts.
 
-### Attention Blocks
-
 ## Methodology
 
 ### Data Collection and Preprocessing
@@ -78,23 +76,20 @@ In practice, an LSTM-based network would apply the three blocks that make up a s
 
 #### Architecture
 
-(Lily)
+(Ivy)
 
 #### Parameter Sweeps
 
-(Ivy+Lily)
+(Lily)
 (needs images)
-
-### LSTM-Attention Model Development
-
-
-
 
 ## Results (How It Went)
 
-### Pre-Tuned LSTM vs Tuned LSTM
+### 6-Channel Outputs
 
 (Lily + Ivy)
 (needs images)
 
-### Tuned LSTM vs LSTM-Attention
+## Conclusion and Future Work
+
+(Ivy)
