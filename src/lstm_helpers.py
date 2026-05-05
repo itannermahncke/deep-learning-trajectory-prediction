@@ -17,7 +17,6 @@ def lookback_sequence(raw_data, lookback_size=100, columns=None):
     Returns:
         a list of lookback_size-sized arrays containing sections of single-flight data. Arrays referencing the same flight are offset from the next in sequence are offset by one timestep.
     """
-    print(raw_data)
     # this object will be returned
     sequences = []
     # grab sorted flights
@@ -25,7 +24,6 @@ def lookback_sequence(raw_data, lookback_size=100, columns=None):
         raw_data,
         utils.extract_flight_indices(raw_data),
     )
-    print(all_flights)
     for flight in all_flights:
         flight = flight[columns]
 
@@ -37,5 +35,4 @@ def lookback_sequence(raw_data, lookback_size=100, columns=None):
             seq = flight.iloc[i : i + lookback_size + 1].to_numpy()
             sequences.append(seq)
     # return
-    print(sequences)
     return np.stack(sequences)

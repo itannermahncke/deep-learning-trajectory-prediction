@@ -49,7 +49,6 @@ def extract_flight_indices(all_flight_df, filter=None, csv_name=None):
                         <= filter
                     ):
                         continue
-                print("Saving flight")
                 flight_rows.append(
                     {"icao24": icao24, "start": start_idx, "end": end_idx}
                 )
@@ -98,13 +97,14 @@ def extract_all_flights(
     flights = []
     flight_count = len(flight_index_df)
     for flight_idx in range(0, flight_count):
-        flights.append(
-            extract_single_flight(
-                all_flight_df,
-                flight_index_df,
-                flight_idx,
-            )
+        flight = extract_single_flight(
+            all_flight_df,
+            flight_index_df,
+            flight_idx,
         )
+        if not flight.empty:
+            flights.append(relative_latlon_as_km(flight))
+
     return flights
 
 
