@@ -84,17 +84,15 @@ The preprocessing pipeline begins by selecting the relevant variables from the r
 
 We also experimented with a delta variant where the model was fed absolute values but was trained to predict the change in state values. In the delta variant of the pipeline, the only difference is in how to target is computed. The target is now the difference between the next scaled state and the current scaled state. The model receives the absolute states but learns to predict the next change or delta.
 
-### Model Development
+### Model Design Decisions
 
-#### Design Decisions
-
-We implemented and trained both an LSTM-based network and a BiLSTM-based network for this project. The networks each operate on six channels of input: latitude, longitude, velocity, heading, geoaltitude, and baroaltitude. The networks also each output a six-channel prediction representing the same state vector.
+We implemented and trained both a simple LSTM-based network and a BiLSTM-based network for this project. The networks each operate on six channels of input: latitude, longitude, velocity, heading, geoaltitude, and baroaltitude. The networks also each output a six-channel prediction representing the same state vector.
 
 Additionally, we designed both networks to be stateless, meaning that no memory was preserved between each lookback sequence. This was to prevent the models from overfitting to entire flights rather than learning to recognize common flight patterns across the dataset.
 
 For our model training, we ran sweeps over the following parameters: batch size, lookback length, hidden dimension size, number of layers, and learning rate. Loss was computed using Mean Absolute Error (MAE), which measures the average absolute difference between predicted and true values across all features and samples in a batch. In the absolute prediction model, the loss compares the predicted next state to the true next state. In the delta version, the loss instead compares the predicted change in state to the true change.
 
-#### Parameter Sweeps
+### Refining Models With Parameter Sweeps
 
 For our BiLSTM, we ran a total of five parameter sweeps, narrowing down the values for each parameter depending on the sweep results. Below are the first parameter values we swept and the last parameter values we swept.
 
@@ -167,6 +165,8 @@ These plots show the performance of the simple LSTM across all six state channel
 ![](images/results/lstm-lat.png) | ![](images/results/lstm-lon.png)
 ![](images/results/lstm-heading.png) | ![](images/results/lstm-velocity.png)
 ![](images/results/lstm-geoaltitude.png) | ![](images/results/lstm-baroaltitude.png)
+> **Fig N** Six plots comparing LSTM predictions 
+
 
 ### Bidirectional LSTM Performance
 
