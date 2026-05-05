@@ -102,4 +102,8 @@ This project specifically relies on data from [OpenSky's Weekly 24 Hours of Stat
 
 ## Conclusion and Future Work
 
-(Ivy)
+In summary, we found very limited success utilizing a BiLSTM-based network for trajectory prediction. The network was most successful with predicting a single timestep, or 10 seconds, into the future, as long as it received consistent ADS-B data updates to rely on for each subsequent prediction. The network was least successful during simulated dropouts in which it was forced to rely on its own prediction sequence for future predictions, at which point its trajectory predictions quickly deteriorated in accuracy. 
+
+Future work on this project would include two parallel explorations: improving the BiLSTM-based network and developing baselines of performance for comparison. To improve the BiLSTM-based network, substantially increasing the amount of training data could lead to improved results. While this project only evaluated a model trained on 24 hours of flight data, training on several days or months could result in improved pattern recognition and generalizability of the model's prediction capabiltiies. Another potential improvement would be extending the model to also incorporate an attention block or other transformer-based methods, which could help to strengthen context across datapoints in the flight trajectory.
+
+For performance baselines, it would be valuable to compare the model to a classical physics-based model using kinematics for prediction. Since kinematic methods are so computationally efficient to run in real-time, they are extremely popular for UAVs performing tracking tasks. Therefore, a computationally hefty model such as a neural network would need to substantially outperform a kinematic model in order to be worth utilizing. Kinematic baselines are a common point of comparison in studies attempting a similar model as this project, so there is precedent for using them as an evaluation tool.
