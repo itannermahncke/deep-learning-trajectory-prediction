@@ -144,6 +144,7 @@ We also experimented with a delta variant where the model was fed absolute value
 ```
 
 We ran a total of 50 runs where once more parameter values were randomly selected from the ones provided. Below are the results from the runs. 
+
 <img src="images/bilstm-delta-results.png" width="600">
 Our best performing model achieved a loss of 0.0224. Its parameters were a batch size of 32, lookback of 25, hidden size of 192, layer amount of 1, and learning rate of 0.0004.
 
