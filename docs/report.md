@@ -123,8 +123,9 @@ Fifth Sweep
     },
 },
 ```
-For our fifth sweep, we ran a total of 60 runs. Each run randomly picked parameter values from the provided parameter sweep values. Below are the results from the runs. The visual below shows the loss the run achieved and shows what parameters it ran with. 
-<img src="images/fifth-bilstm-sweep-results.png" width="600">
+For our fifth sweep, we ran a total of 60 runs. Each run randomly picked parameter values from the provided parameter sweep values. Below are the results from the runs. The visual below shows the loss the run achieved and shows what parameters it ran with.
+
+<img src="images/methods/fifth-bilstm-sweep-results.png" width="600">
 
 > **Fig 8** Visualization of the runs in the fifth BiLSTM parameter sweep. The first four axes represent the parameter values. Where a run's line intersects with the axis represents what parameter value was used. The validation loss axis shows what final loss the run achieved.
 
@@ -147,7 +148,7 @@ We also repeated the process for the delta variant of our BiLSTM. We ran one swe
 
 We ran a total of 50 runs where once more parameter values were randomly selected from the ones provided. Below are the results from the runs. 
 
-<img src="images/bilstm-delta-results.png" width="600">
+<img src="images/methods/bilstm-delta-results.png" width="600">
 
 > **Fig 9** Visualization of the runs in the delta BiLSTM parameter sweep. The first four axes represent the parameter values. Where a run's line intersects with the axis represents what parameter value was used. The validation loss axis shows what final loss the run achieved.
 
