@@ -84,15 +84,15 @@ The preprocessing pipeline begins by selecting the relevant variables from the r
 
 In the delta variant of the pipeline, the only difference is in how to target is computed. The target is now the difference between the next scaled state and the current scaled state. The model receives the absolute states but learns to predict the next change or delta.
 
-### LSTM Model Development
+### Model Development
 
-### Model Design
+#### Design Decisions
 
 We implemented and trained both an LSTM-based network and a BiLSTM-based network for this project. The networks each operate on six channels of input: latitude, longitude, velocity, heading, geoaltitude, and baroaltitude. The networks also each output a six-channel prediction representing the same state vector.
 
 Additionally, we designed both networks to be stateless, meaning that no memory was preserved between each lookback sequence. This was to prevent the models from overfitting to entire flights rather than learning to recognize common flight patterns across the dataset.
 
-For our model training, we ran sweeps over the following parameters: batch size, lookback length, hidden dimension size, number of layers, and learning rate. Loss was computed using Mean Absolute Error (MAE), which measures the average absolute difference between predicted and true values across all features and samples in a batch. In the absolute prediction model, the loss compares the predicted next state to the true next state. In the delta version, the loss instead compares the predicted change in state to the true change. 
+For our model training, we ran sweeps over the following parameters: batch size, lookback length, hidden dimension size, number of layers, and learning rate. Loss was computed using Mean Absolute Error (MAE), which measures the average absolute difference between predicted and true values across all features and samples in a batch. In the absolute prediction model, the loss compares the predicted next state to the true next state. In the delta version, the loss instead compares the predicted change in state to the true change.
 
 #### Parameter Sweeps
 
@@ -155,14 +155,18 @@ Our best performing model achieved a loss of 0.0224. Its parameters were a batch
 
 ## Results (How It Went)
 
-### 6-Channel Outputs
+### Vanilla LSTM Performance
+
+### Bidirectional LSTM Performance
+
+### BiLSTM With Deltas Performance
 
 (Lily + Ivy)
 (needs images)
 
 ## Conclusion and Future Work
 
-In summary, we found very limited success utilizing a BiLSTM-based network for trajectory prediction. The network was most successful with predicting a single timestep, or 10 seconds, into the future, as long as it received consistent ADS-B data updates to rely on for each subsequent prediction. The network was least successful during simulated dropouts in which it was forced to rely on its own prediction sequence for future predictions, at which point its trajectory predictions quickly deteriorated in accuracy. 
+In summary, we found very limited success utilizing an LSTM- or BiLSTM-based network for trajectory prediction. The network was most successful with predicting a single timestep, or 10 seconds, into the future, as long as it received consistent ADS-B data updates to rely on for each subsequent prediction. The network was least successful during simulated dropouts in which it was forced to rely on its own prediction sequence for future predictions, at which point its trajectory predictions quickly deteriorated in accuracy. 
 
 Future work on this project would include two parallel explorations: improving the BiLSTM-based network and developing baselines of performance for comparison. To improve the BiLSTM-based network, substantially increasing the amount of training data could lead to improved results. While this project only evaluated a model trained on 24 hours of flight data, training on several days or months could result in improved pattern recognition and generalizability of the model's prediction capabiltiies. Another potential improvement would be extending the model to also incorporate an attention block or other transformer-based methods, which could help to strengthen context across datapoints in the flight trajectory.
 
