@@ -80,7 +80,7 @@ This project specifically relies on data from [OpenSky's Weekly 24 Hours of Stat
 
 #### Data Preprocessing
 
-The preprocessing pipeline begins by selecting the relevant variables from the raw time series data and applying feature scaling using a StandardScaler, which normalizes each variable to have zero mean and unit variance. This scaling is applied before sequence construction to ensure consistent feature magnitudes scaling. The data is then segmented into individual flights and only flights that are longer than the lookback length plus 1 are kept. Within each flight, overlapping sequences are generated using a sliding window of size the lookback plus 1. From each sequence, the first look_back timesteps form the input (x_seq), and the final timestep forms the target (y_seq), producing  input-output pairs. The dataset is then split into training and testing sets according to a specified ratio, converted into PyTorch tensors, and loaded into DataLoaders without shuffling to maintain the timeseries.
+The preprocessing pipeline begins by selecting the relevant variables from the raw time series data and applying feature scaling using a StandardScaler, which normalizes each variable to have zero mean and unit variance. This scaling is applied before sequence construction to ensure consistent feature magnitudes scaling. The data is then segmented into individual flights and only flights that are longer than the lookback length plus 1 are kept. Within each flight, overlapping sequences are generated using a sliding window of size the lookback plus 1. From each sequence, the first look_back timesteps form the input (x_seq), and the final timestep forms the target (y_seq), producing  input-output pairs. The dataset is then split into training and testing sets according to a specified ratio, converted into PyTorch tensors, and loaded into as batches DataLoaders without shuffling to maintain the timeseries.
 
 In the delta variant of the pipeline, the only difference is in how to target is computed. The target is now the difference between the next scaled state and the current scaled state. The model receives the absolute states but learns to predict the next change or delta.
 
@@ -90,16 +90,62 @@ In the delta variant of the pipeline, the only difference is in how to target is
 
 We implemented and trained both an LSTM-based network and a BiLSTM-based network for this project. The networks each operate on six channels of input: latitude, longitude, velocity, heading, geoaltitude, and baroaltitude. The networks also each output a six-channel prediction representing the same state vector.
 
-[parameter values/sweeps]
-
 Additionally, we designed both networks to be stateless, meaning that no memory was preserved between each lookback sequence. This was to prevent the models from overfitting to entire flights rather than learning to recognize common flight patterns across the dataset.
+
+For our model training, we ran sweeps over the following parameters: batch size, lookback length, hidden dimension size, number of layers, and learning rate. Loss was computed using Mean Absolute Error (MAE), which measures the average absolute difference between predicted and true values across all features and samples in a batch. In the absolute prediction model, the loss compares the predicted next state to the true next state. In the delta version, the loss instead compares the predicted change in state to the true change. 
 
 #### Parameter Sweeps
 
-(Lily)
-(needs images)
+For our BiLSTM, we ran a total of five parameter sweeps. Below are the parameters we swept over for each sweep. Below are the first parameter values we swept and the last parameter values we swept.
 
-Finally, we experimented with training and prediction for the change in state values, in addition to the usual method of training and prediction for absolute state values.
+First Sweep
+```
+"parameters": {
+    "batch_size": {"values": [32, 64]},
+    "look_back": {"values": [10, 20, 30, 40, 50]},
+    "hidden": {"values": [64, 96, 128, 192]},
+    "layer": {"values": [1, 2]},
+    "learning_rate": {"values": [0.00005, 0.0001, 0.0002, 0.0005, 0.001]},
+},
+```
+
+Fifth Sweep
+```
+"parameters": {
+    "batch_size": {"values": [32, 40, 48, 56]},
+    "look_back": {"values": [18, 20, 22]},
+    "hidden": {"values": [176, 192, 208, 224]},
+    "layer": {"values": [1]},
+    "learning_rate": {
+        "distribution": "log_uniform_values",
+        "min": 8e-5,
+        "max": 1.8e-4,
+    },
+},
+```
+For our fifth sweep, we ran a total of 60 runs. Each run randomly picked parameter values from the provided parameter sweep values. Below are the results from the runs. The visual below shows the loss the run achieved and shows what parameters it ran with. 
+<img src="images/fifth-bilstm-sweep-results.png" width="600">
+
+Our best performing model achieved a final loss of 0.095 and lowest loss of 0.0828. Its parameter values were a batch size of 32, lookback of 22, hidden size of 192, layer amount of 1, and learning rate of 0.000143.
+
+We also experimented with a delta variant where the model was fed absolute values but was trained to predict the change in state values. We ran one sweep with the model over these parameters. 
+```
+"parameters": {
+    "batch_size": {"values": [32, 48, 64, 96, 128]},
+    "look_back": {"values": [18, 20, 22, 25]},
+    "hidden": {"values": [128, 160, 192]},
+    "layer": {"values": [1]},
+    "learning_rate": {
+        "distribution": "log_uniform_values",
+        "min": 1e-4,
+        "max": 8e-4,
+    },
+},
+```
+
+We ran a total of 50 runs where once more parameter values were randomly selected from the ones provided. Below are the results from the runs. 
+<img src="images/bilstm-delta-results.png" width="600">
+Our best performing model achieved a loss of 0.0224. Its parameters were a batch size of 32, lookback of 25, hidden size of 192, layer amount of 1, and learning rate of 0.0004.
 
 ## Results (How It Went)
 
