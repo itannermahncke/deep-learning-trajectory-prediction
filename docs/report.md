@@ -80,23 +80,20 @@ Bidirectional LSTMs are an extension of the vanilla LSTM model that introduces a
 
 #### Architecture
 
-(Lily)
+(Ivy)
 
 #### Parameter Sweeps
 
-(Ivy+Lily)
+(Lily)
 (needs images)
-
-### LSTM-Attention Model Development
-
-
-
 
 ## Results (How It Went)
 
-### Pre-Tuned LSTM vs Tuned LSTM
+### 6-Channel Outputs
 
 (Lily + Ivy)
 (needs images)
 
-### Tuned LSTM vs LSTM-Attention
+## Conclusion and Future Work
+
+(Ivy)
