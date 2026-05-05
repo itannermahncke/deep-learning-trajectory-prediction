@@ -60,7 +60,9 @@ The third and final block, the Output Gate, determines what value to add to the 
 
 In practice, an LSTM-based network would apply the three blocks that make up a single LSTM unit to each item in the given sequence, in order. The resultant output of the final LSTM unit is the prediction for the next item in the sequence. The long-term memory and short-term memory work together to balance old information with new, while also avoiding the vanishing/exploding gradient problem that vanilla RNNs struggle with. As a result, LSTMs are a popular choice for sequence prediction in many contexts.
 
-### Attention Blocks
+### Bidirectional LSTMs
+
+Bidirectional LSTMs are an extension of the vanilla LSTM model that introduces a second LSTM unit to each item in the sequence. Unlike the original system, which propagate memory of earlier information to inform and enrich later information, the secondary units propagate memory of later information to inform earlier information. This extension is useful for sequences in which later tokens can inform and explain earlier tokens. In the case of this project, implementation and performance of a BiLSTM-based network was explored alongside a vanilla LSTM-based network.
 
 ## Methodology
 
