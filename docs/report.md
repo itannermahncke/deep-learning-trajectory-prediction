@@ -96,7 +96,7 @@ For our model training, we ran sweeps over the following parameters: batch size,
 
 #### Parameter Sweeps
 
-For our BiLSTM, we ran a total of five parameter sweeps. Below are the parameters we swept over for each sweep. Below are the first parameter values we swept and the last parameter values we swept.
+For our BiLSTM, we ran a total of five parameter sweeps. Below are the first parameter values we swept and the last parameter values we swept.
 
 First Sweep
 ```
@@ -126,6 +126,8 @@ Fifth Sweep
 For our fifth sweep, we ran a total of 60 runs. Each run randomly picked parameter values from the provided parameter sweep values. Below are the results from the runs. The visual below shows the loss the run achieved and shows what parameters it ran with. 
 <img src="images/fifth-bilstm-sweep-results.png" width="600">
 
+> **Fig 8** Visualization of the runs in the fifth BiLSTM parameter sweep. The first four axes represent the parameter values. Where a run's line intersects with the axis represents what parameter value was used. The validation loss axis shows what final loss the run achieved.
+
 Our best performing model achieved a final loss of 0.095 and lowest loss of 0.0828. Its parameter values were a batch size of 32, lookback of 22, hidden size of 192, layer amount of 1, and learning rate of 0.000143.
 
 We also experimented with a delta variant where the model was fed absolute values but was trained to predict the change in state values. We ran one sweep with the model over these parameters. 
@@ -146,6 +148,9 @@ We also experimented with a delta variant where the model was fed absolute value
 We ran a total of 50 runs where once more parameter values were randomly selected from the ones provided. Below are the results from the runs. 
 
 <img src="images/bilstm-delta-results.png" width="600">
+
+> **Fig 9** Visualization of the runs in the delta BiLSTM parameter sweep. The first four axes represent the parameter values. Where a run's line intersects with the axis represents what parameter value was used. The validation loss axis shows what final loss the run achieved.
+
 Our best performing model achieved a loss of 0.0224. Its parameters were a batch size of 32, lookback of 25, hidden size of 192, layer amount of 1, and learning rate of 0.0004.
 
 ## Results (How It Went)
