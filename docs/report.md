@@ -84,15 +84,47 @@ The preprocessing pipeline begins by selecting the relevant variables from the r
 
 We also experimented with a delta variant where the model was fed absolute values but was trained to predict the change in state values. In the delta variant of the pipeline, the only difference is in how to target is computed. The target is now the difference between the next scaled state and the current scaled state. The model receives the absolute states but learns to predict the next change or delta.
 
-### Model Design Decisions
+### Model Development
 
-We implemented and trained both a simple LSTM-based network and a BiLSTM-based network for this project. The networks each operate on six channels of input: latitude, longitude, velocity, heading, geoaltitude, and baroaltitude. The networks also each output a six-channel prediction representing the same state vector.
+#### Design Decisions
+
+We implemented and trained both an LSTM-based network and a BiLSTM-based network for this project. The networks each operate on six channels of input: latitude, longitude, velocity, heading, geoaltitude, and baroaltitude. The networks also each output a six-channel prediction representing the same state vector.
 
 Additionally, we designed both networks to be stateless, meaning that no memory was preserved between each lookback sequence. This was to prevent the models from overfitting to entire flights rather than learning to recognize common flight patterns across the dataset.
 
 For our model training, we ran sweeps over the following parameters: batch size, lookback length, hidden dimension size, number of layers, and learning rate. Loss was computed using Mean Absolute Error (MAE), which measures the average absolute difference between predicted and true values across all features and samples in a batch. In the absolute prediction model, the loss compares the predicted next state to the true next state. In the delta version, the loss instead compares the predicted change in state to the true change.
 
-### Refining Models With Parameter Sweeps
+#### Parameter Sweeps
+With our LSTM, we ran three parameter sweeps with each sweep narrowing down the values for each parameter. Below are the first parameter values and last parameter values we swept. Of note, for the LSTM sweeps we initially decided not to sweep batch size but for the BiLSTM training we chose to sweep batch size.
+
+First Sweep
+
+```
+"parameters": {
+    "batch_size": {"values": [64]},
+    "look_back": {"values": [20, 50, 100]},
+    "hidden": {"values": [32, 64, 128]},
+    "layer": {"values": [1, 2]},
+    "learning_rate": {"values": [0.0001, 0.0005, 0.001]},
+}
+```
+
+Third Sweep
+```
+"parameters": {
+    "batch_size": {"values": [64]},
+    "look_back": {"values": [20, 30, 50]},
+    "hidden": {"values": [192, 256, 320]},
+    "layer": {"values": [1]},
+    "learning_rate": {"values": [0.0002, 0.0003, 0.0004]},
+}
+```
+
+For our third sweep, we ran a total of 50 runs. Each run randomly picked parameter values from the provided parameter sweep values. Below are the results from the runs. The visual below shows the loss the run achieved and shows what parameters it ran with.
+
+<img src="images/methods/third-lstm-sweep-results.png" width="600">
+
+> **Fig 9** Visualization of the runs in the third LSTM parameter sweep. The first four axes represent the parameter values. Where a run's line intersects with the axis represents what parameter value was used. The validation loss axis shows what final loss the run achieved.
 
 For our BiLSTM, we ran a total of five parameter sweeps, narrowing down the values for each parameter depending on the sweep results. Below are the first parameter values we swept and the last parameter values we swept.
 
@@ -121,16 +153,15 @@ Fifth Sweep
     },
 },
 ```
-For our fifth sweep, we ran a total of 60 runs. Each run randomly picked parameter values from the provided parameter sweep values. Below are the results from the runs. The visual below shows the loss the run achieved and shows what parameters it ran with.
+For our fifth sweep, we ran a total of 60 runs. In this, the parameter values were also selected from the ones provided. Below are the results.
 
 <img src="images/methods/fifth-bilstm-sweep-results.png" width="600">
 
-> **Fig 8** Visualization of the runs in the fifth BiLSTM parameter sweep. The first four axes represent the parameter values. Where a run's line intersects with the axis represents what parameter value was used. The validation loss axis shows what final loss the run achieved.
+> **Fig 9** Visualization of the runs in the fifth BiLSTM parameter sweep. The first four axes represent the parameter values. Where a run's line intersects with the axis represents what parameter value was used. The validation loss axis shows what final loss the run achieved.
 
 Our best performing model achieved a final loss of 0.095 and lowest loss of 0.0828. Its parameter values were a batch size of 32, lookback of 22, hidden size of 192, layer amount of 1, and learning rate of 0.000143.
 
-We also repeated the process for the delta variant of our BiLSTM. We ran one sweep with this model over the following parameters.
-
+We also repeated the process for the delta variant of our BiLSTM. We ran one sweep with this model over the following parameters. 
 ```
 "parameters": {
     "batch_size": {"values": [32, 48, 64, 96, 128]},
@@ -149,42 +180,20 @@ We ran a total of 50 runs where once more parameter values were randomly selecte
 
 <img src="images/methods/bilstm-delta-results.png" width="600">
 
-> **Fig 9** Visualization of the runs in the delta BiLSTM parameter sweep. The first four axes represent the parameter values. Where a run's line intersects with the axis represents what parameter value was used. The validation loss axis shows what final loss the run achieved.
+> **Fig 10** Visualization of the runs in the delta BiLSTM parameter sweep. The first four axes represent the parameter values. Where a run's line intersects with the axis represents what parameter value was used. The validation loss axis shows what final loss the run achieved.
 
 Our best performing model achieved a loss of 0.0224. Its parameters were a batch size of 32, lookback of 25, hidden size of 192, layer amount of 1, and learning rate of 0.0004.
 
-## Model Performance Comparison Results
-
-The tables below show the performance of each LSTM type across all six state channels. In each plot, the model makes each new prediction using a prior sequence of ADS-B data up to the lookback size. After the dotted blue line, the model switches to making each new prediction using a prior sequence of its own predictions. This is meant to simulate forecasting a trajectory over a longer-than-immediate time horizon. In a real-world context, a new forecast would be generated each time a new row of ADS-B data was received from a tracked aircraft.
+## Results (How It Went)
 
 ### Vanilla LSTM Performance
 
-These plots show the performance of the simple LSTM across all six state channels.
-|  |  |
-:--:|:--:
-![](images/results/lstm-lat.png) | ![](images/results/lstm-lon.png)
-![](images/results/lstm-heading.png) | ![](images/results/lstm-velocity.png)
-![](images/results/lstm-geoaltitude.png) | ![](images/results/lstm-baroaltitude.png)
-> **Fig N** Six plots comparing LSTM predictions 
-
-
 ### Bidirectional LSTM Performance
-
-These plots show the performance of the Bidirectional LSTM across all six state channels.
-|  |  |
-:--:|:--:
-![](images/results/bilstm-lat.png) | ![](images/results/bilstm-lon.png)
-![](images/results/bilstm-heading.png) | ![](images/results/bilstm-velocity.png)
-![](images/results/bilstm-geoaltitude.png) | ![](images/results/bilstm-baroaltitude.png)
 
 ### BiLSTM With Deltas Performance
 
-These plots show the performance of the Bidirectional LSTM with deltas across all six state channels.
-|  |  |
-:--:|:--:
-![](images/results/delta-bilstm-lat.png) | ![](images/results/delta-bilstm-lon.png)
-![](images/results/delta-bilstm-heading.png) | ![](images/results/delta-bilstm-velocity.png)
-![](images/results/delta-bilstm-geoaltitude.png) | ![](images/results/delta-bilstm-baroaltitude.png)
+(Lily + Ivy)
+(needs images)
 
 ## Conclusion and Future Work
 
