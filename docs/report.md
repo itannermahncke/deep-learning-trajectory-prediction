@@ -155,16 +155,36 @@ We ran a total of 50 runs where once more parameter values were randomly selecte
 
 Our best performing model achieved a loss of 0.0224. Its parameters were a batch size of 32, lookback of 25, hidden size of 192, layer amount of 1, and learning rate of 0.0004.
 
-## Results (How It Went)
+## Model Performance Comparison Results
+
+The tables below show the performance of each LSTM type across all six state channels. In each plot, the model makes each new prediction using a prior sequence of ADS-B data up to the lookback size. After the dotted blue line, the model switches to making each new prediction using a prior sequence of its own predictions. This is meant to simulate forecasting a trajectory over a longer-than-immediate time horizon. In a real-world context, a new forecast would be generated each time a new row of ADS-B data was received from a tracked aircraft.
 
 ### Vanilla LSTM Performance
 
+These plots show the performance of the simple LSTM across all six state channels.
+|  |  |
+:--:|:--:
+![](images/results/lstm-lat.png) | ![](images/results/lstm-lon.png)
+![](images/results/lstm-heading.png) | ![](images/results/lstm-velocity.png)
+![](images/results/lstm-geoaltitude.png) | ![](images/results/lstm-baroaltitude.png)
+
 ### Bidirectional LSTM Performance
+
+These plots show the performance of the Bidirectional LSTM across all six state channels.
+|  |  |
+:--:|:--:
+![](images/results/bilstm-lat.png) | ![](images/results/bilstm-lon.png)
+![](images/results/bilstm-heading.png) | ![](images/results/bilstm-velocity.png)
+![](images/results/bilstm-geoaltitude.png) | ![](images/results/bilstm-baroaltitude.png)
 
 ### BiLSTM With Deltas Performance
 
-(Lily + Ivy)
-(needs images)
+These plots show the performance of the Bidirectional LSTM with deltas across all six state channels.
+|  |  |
+:--:|:--:
+![](images/results/delta-bilstm-lat.png) | ![](images/results/delta-bilstm-lon.png)
+![](images/results/delta-bilstm-heading.png) | ![](images/results/delta-bilstm-velocity.png)
+![](images/results/delta-bilstm-geoaltitude.png) | ![](images/results/delta-bilstm-baroaltitude.png)
 
 ## Conclusion and Future Work
 
