@@ -82,7 +82,7 @@ This project specifically relies on data from [OpenSky's Weekly 24 Hours of Stat
 
 The preprocessing pipeline begins by selecting the relevant variables from the raw time series data and applying feature scaling using a StandardScaler, which normalizes each variable to have zero mean and unit variance. This scaling is applied before sequence construction to ensure consistent feature magnitudes scaling. The data is then segmented into individual flights and only flights that are longer than the lookback length plus 1 are kept. Within each flight, overlapping sequences are generated using a sliding window of size the lookback plus 1. From each sequence, the first look_back timesteps form the input (x_seq), and the final timestep forms the target (y_seq), producing  input-output pairs. The dataset is then split into training and testing sets according to a specified ratio, converted into PyTorch tensors, and loaded into as batches DataLoaders without shuffling to maintain the timeseries.
 
-In the delta variant of the pipeline, the only difference is in how to target is computed. The target is now the difference between the next scaled state and the current scaled state. The model receives the absolute states but learns to predict the next change or delta.
+We also experimented with a delta variant where the model was fed absolute values but was trained to predict the change in state values. In the delta variant of the pipeline, the only difference is in how to target is computed. The target is now the difference between the next scaled state and the current scaled state. The model receives the absolute states but learns to predict the next change or delta.
 
 ### Model Development
 
@@ -96,7 +96,7 @@ For our model training, we ran sweeps over the following parameters: batch size,
 
 #### Parameter Sweeps
 
-For our BiLSTM, we ran a total of five parameter sweeps. Below are the first parameter values we swept and the last parameter values we swept.
+For our BiLSTM, we ran a total of five parameter sweeps, narrowing down the values for each parameter depending on the sweep results. Below are the first parameter values we swept and the last parameter values we swept.
 
 First Sweep
 ```
@@ -130,7 +130,7 @@ For our fifth sweep, we ran a total of 60 runs. Each run randomly picked paramet
 
 Our best performing model achieved a final loss of 0.095 and lowest loss of 0.0828. Its parameter values were a batch size of 32, lookback of 22, hidden size of 192, layer amount of 1, and learning rate of 0.000143.
 
-We also experimented with a delta variant where the model was fed absolute values but was trained to predict the change in state values. We ran one sweep with the model over these parameters. 
+We also repeated the process for the delta variant of our BiLSTM. We ran one sweep with this model over the following parameters. 
 ```
 "parameters": {
     "batch_size": {"values": [32, 48, 64, 96, 128]},
