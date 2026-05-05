@@ -72,7 +72,7 @@ Bidirectional LSTMs are an extension of the vanilla LSTM model that introduces a
 
 To train a model capable of predicting flight future flight trajectories, a substantial and detailed flight dataset is necessary. This project utilizes data from the [OpenSky Sensor Network,](https://opensky-network.org/) a database of open-source air traffic and flight data intended for research purposes. OpenSky provides live air traffic data as well as historical data from several years of data collection across the world.
 
-<img src="images/intro/opensky.png" width="600">
+<img src="images/methods/opensky.png" width="600">
 
 > **Fig 7** Screenshot from the OpenSky website's live air traffic data feed over New York City, USA. Taken on May 5th, 2026, at 1:38pm EST.
 
@@ -84,14 +84,20 @@ This project specifically relies on data from [OpenSky's Weekly 24 Hours of Stat
 
 ### LSTM Model Development
 
-#### Architecture
+### Model Design
 
-(Ivy)
+We implemented and trained both an LSTM-based network and a BiLSTM-based network for this project. The networks each operate on six channels of input: latitude, longitude, velocity, heading, geoaltitude, and baroaltitude. The networks also each output a six-channel prediction representing the same state vector.
+
+[parameter values/sweeps]
+
+Additionally, we designed both networks to be stateless, meaning that no memory was preserved between each lookback sequence. This was to prevent the models from overfitting to entire flights rather than learning to recognize common flight patterns across the dataset.
 
 #### Parameter Sweeps
 
 (Lily)
 (needs images)
+
+Finally, we experimented with training and prediction for the change in state values, in addition to the usual method of training and prediction for absolute state values.
 
 ## Results (How It Went)
 
