@@ -131,7 +131,8 @@ For our fifth sweep, we ran a total of 60 runs. Each run randomly picked paramet
 
 Our best performing model achieved a final loss of 0.095 and lowest loss of 0.0828. Its parameter values were a batch size of 32, lookback of 22, hidden size of 192, layer amount of 1, and learning rate of 0.000143.
 
-We also repeated the process for the delta variant of our BiLSTM. We ran one sweep with this model over the following parameters. 
+We also repeated the process for the delta variant of our BiLSTM. We ran one sweep with this model over the following parameters.
+
 ```
 "parameters": {
     "batch_size": {"values": [32, 48, 64, 96, 128]},
