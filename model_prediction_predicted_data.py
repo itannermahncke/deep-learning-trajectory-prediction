@@ -12,7 +12,7 @@ from src.simple_bilstm import SimpleBiLSTM as LSTMModel
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-MODEL_NAME = "0.0828-bilstm-22, 192, 1, 0.0001427569125911689"
+MODEL_NAME = "0.0224-bilstm-25, 192, 1, 0.0004003177913925228"
 
 VARIABLES = [
     "lat",
@@ -140,10 +140,10 @@ def run_hybrid_rollout(
         )
 
         with torch.no_grad():
-            predicted_delta = model(model_input).cpu().numpy()[0]
+            prediction = model(model_input).cpu().numpy()[0]
 
         current_state = input_window[-1]
-        prediction = current_state + predicted_delta
+        prediction = current_state + prediction
 
         predicted_scaled.append(prediction)
     return actual_scaled, predicted_scaled, switch_index
@@ -206,7 +206,7 @@ def main():
         "end": 1756220,
     }
 
-    teacher_forcing_ratio = 0.95
+    teacher_forcing_ratio = 0.70
 
     model_config = get_model_config_from_filename(model_path)
     print(model_config)
