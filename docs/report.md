@@ -155,7 +155,7 @@ Our best performing model achieved a loss of 0.0224. Its parameters were a batch
 
 ## Model Performance Comparison Results
 
-The tables below show the performance of each LSTM type across all six state channels. In each plot, the model makes each new prediction using a prior sequence of ADS-B data up to the lookback size. After the dotted blue line, the model switches to making each new prediction using a prior sequence of its own predictions. This is meant to simulate forecasting a trajectory over a longer-than-immediate time horizon. In a real-world context, a new forecast would be generated each time a new row of ADS-B data was received from a tracked aircraft.
+The tables below show the performance of each LSTM type across all six state channels. In each plot, the model's prediction sequence is compared with ground truth ADS-B data from a specified flight in the dataset. The model makes each new prediction using a prior sequence of ADS-B data up to the lookback size. After the dotted blue line, the model switches to making each new prediction using a prior sequence of its own predictions. This is meant to simulate forecasting a trajectory over a longer-than-immediate time horizon. In a real-world context, a new forecast would be generated each time a new row of ADS-B data was received from a tracked aircraft.
 
 ### Vanilla LSTM Performance
 
@@ -165,7 +165,9 @@ These plots show the performance of the simple LSTM across all six state channel
 ![](images/results/lstm-lat.png) | ![](images/results/lstm-lon.png)
 ![](images/results/lstm-heading.png) | ![](images/results/lstm-velocity.png)
 ![](images/results/lstm-geoaltitude.png) | ![](images/results/lstm-baroaltitude.png)
-> **Fig N** Six plots comparing LSTM predictions 
+> **Fig N** Six plots comparing LSTM predictions to ground truth ADS-B data. The plots represent predictions and ground truth values of the following state variables: latitude, longitude, heading, velocity, geoaltitude, and baroaltitude.
+
+Across all six state channels, the vanilla LSTM's predictions are somewhat poor. When the model is only making individual timestep predictions using ADS-B lookback data, it is generally able to estimate the correct sequence of state values, with the exception of latitude and longitude. However, when the model switches to forecasting trajectories over a time horizon, its performance worsens substantially. In every state variable aside from velocity, the model's forecast follows a quadratic arc with no precedent in the prior data. The model is even unable to just follow a constant linear sequence, as a non-learning kinematic model might. Overall, these results would not be viable for use in a safety-critical context.
 
 
 ### Bidirectional LSTM Performance
@@ -176,6 +178,9 @@ These plots show the performance of the Bidirectional LSTM across all six state 
 ![](images/results/bilstm-lat.png) | ![](images/results/bilstm-lon.png)
 ![](images/results/bilstm-heading.png) | ![](images/results/bilstm-velocity.png)
 ![](images/results/bilstm-geoaltitude.png) | ![](images/results/bilstm-baroaltitude.png)
+> **Fig N** Six plots comparing BiLSTM predictions to ground truth ADS-B data. The plots represent predictions and ground truth values of the following state variables: latitude, longitude, heading, velocity, geoaltitude, and baroaltitude.
+
+Across all six state channels, the BiLSTM's predictions do not show a substantial improvement from the vanilla LSTM's performance. The model does show relative improvement in the individual timestep predictions for latitude and longitude. However, the model still performs quite poorly when forecasting trajectories over a time horizon. The model's forecast continues to create quadratic arcs that do not follow the actual sequence of any state variables. The error seems to even be more substantial than that of the vanilla LSTM, particularly for longitude and heading. Overall, these results would also not be viable for use in a safety-critical context.
 
 ### BiLSTM With Deltas Performance
 
@@ -185,10 +190,13 @@ These plots show the performance of the Bidirectional LSTM with deltas across al
 ![](images/results/delta-bilstm-lat.png) | ![](images/results/delta-bilstm-lon.png)
 ![](images/results/delta-bilstm-heading.png) | ![](images/results/delta-bilstm-velocity.png)
 ![](images/results/delta-bilstm-geoaltitude.png) | ![](images/results/delta-bilstm-baroaltitude.png)
+> **Fig N** Six plots comparing BiLSTM delta predictions to ground truth ADS-B data. The plots represent predictions and ground truth values of the following state variables: latitude, longitude, heading, velocity, geoaltitude, and baroaltitude.
+
+Across all six state channels, the incorporation of delta predictions shows a substantial improvement from the BiLSTM's performance. For individual timestep predictions, the delta variant closes the error gap between prediction and ground truth nearly perfectly. Additionally, the model's trajectory forecasting shows meaningful improvement from prior iterations. Longitude predictions specifically are still quite poor, but all other state variable predictions show plausible future trajectories that are generally in line with the ground truth futures. Overall, the error present in the forecasts of all state variables besides longitude is acceptable given that forecasts will be regenerated with frequent incoming ADS-B data.
 
 ## Conclusion and Future Work
 
-In summary, we found very limited success utilizing an LSTM- or BiLSTM-based network for trajectory prediction. The network was most successful with predicting a single timestep, or 10 seconds, into the future, as long as it received consistent ADS-B data updates to rely on for each subsequent prediction. The network was least successful during simulated dropouts in which it was forced to rely on its own prediction sequence for future predictions, at which point its trajectory predictions quickly deteriorated in accuracy. 
+In summary, we found very limited success utilizing an LSTM- or BiLSTM-based network for trajectory prediction, specifically by predicting changes in state variables rather than predicting absolute values. The final model was most successful with predicting a single timestep, or 10 seconds, into the future, as long as it received consistent ADS-B data updates to rely on for each subsequent prediction. The final model was less successful during simulated dropouts in which it was forced to rely on its own prediction sequence for future predictions; however, aside from longitude all state variable forecasts were plausible and in-line with ground truth trajectories.
 
 Future work on this project would include two parallel explorations: improving the BiLSTM-based network and developing baselines of performance for comparison. To improve the BiLSTM-based network, substantially increasing the amount of training data could lead to improved results. While this project only evaluated a model trained on 24 hours of flight data, training on several days or months could result in improved pattern recognition and generalizability of the model's prediction capabiltiies. Another potential improvement would be extending the model to also incorporate an attention block or other transformer-based methods, which could help to strengthen context across datapoints in the flight trajectory.
 
