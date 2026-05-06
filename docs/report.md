@@ -4,6 +4,8 @@
 
 In this project, we utilize deep learning to predict future trajectories of aircraft in real-time using their incoming ADS-B flight data. We first establish the context of aircraft navigation and the necessity of accurate flight prediction methods. Next, we investigate Recurrent Neural Networks (RNNs), a type of neural network used for sequential prediction and temporal data, to solve the prediction problem. After training and fine-tuning our model, we evaluate its performance on masked flight data to the ground truth data, as well as baseline physics and modeling-based methods. Next, we evaluate the addition of an attention block for model performance. Finally, we discuss the significance of our model's relative performance in its real-world context and outline possibilities for future development.
 
+Source code: [Repo](https://github.com/itannermahncke/deep-learning-trajectory-prediction)
+
 ## Introduction
 
 ### Context and Motivation for Trajectory Prediction
@@ -245,7 +247,7 @@ These plots show the performance of the Bidirectional LSTM with deltas across al
 ![](images/results/delta-bilstm-lat.png) | ![](images/results/delta-bilstm-lon.png)
 ![](images/results/delta-bilstm-heading.png) | ![](images/results/delta-bilstm-velocity.png)
 ![](images/results/delta-bilstm-geoaltitude.png) | ![](images/results/delta-bilstm-baroaltitude.png)
-> **Fig N** Six plots comparing BiLSTM delta predictions to ground truth ADS-B data. The plots represent predictions and ground truth values of the following state variables: latitude, longitude, heading, velocity, geoaltitude, and baroaltitude.
+> **Fig 16** Six plots comparing BiLSTM delta predictions to ground truth ADS-B data. The plots represent predictions and ground truth values of the following state variables: latitude, longitude, heading, velocity, geoaltitude, and baroaltitude.
 
 Across all six state channels, the incorporation of delta predictions shows a substantial improvement from the BiLSTM's performance. For individual timestep predictions, the delta variant closes the error gap between prediction and ground truth nearly perfectly. Additionally, the model's trajectory forecasting shows meaningful improvement from prior iterations. Longitude predictions specifically are still quite poor, but all other state variable predictions show plausible future trajectories that are generally in line with the ground truth futures. Overall, the error present in the forecasts of all state variables besides longitude is acceptable given that forecasts will be regenerated with frequent incoming ADS-B data.
 
