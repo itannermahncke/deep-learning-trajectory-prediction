@@ -8,9 +8,14 @@ from torch import nn, optim
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from lstm_model_class import LSTMModel
+# from simple_lstm_model import SimpleLSTMModel as LSTMModel
+from simple_bilstm import SimpleBiLSTM as LSTMModel
+
 from early_stopper import EarlyStopper
 
 import wandb
@@ -46,8 +51,14 @@ class LSTMPipeline:
         """
         self._hyperparameters = hyperparameters
         self._timeseries = timeseries
-        self._device = "cuda" if torch.cuda.is_available() else "cpu"
+        if not torch.cuda.is_available():
+            raise RuntimeError("CUDA is not available. PyTorch is not seeing the GPU.")
+
+        self._device = torch.device("cuda:0")
         self._model = LSTMModel(self._hyperparameters).to(self._device)
+
+        print("Using device:", self._device)
+        print("Model device:", next(self._model.parameters()).device)
         self._scaler = StandardScaler()
 
         # Preprocess data
@@ -73,9 +84,6 @@ class LSTMPipeline:
         Returns:
             tuple: A tuple containing the predictions for the training and testing sets.
         """
-
-        # Logs gradient
-        wandb.watch(self._model, self._loaders["criterion"], log="all", log_freq=1)
 
         # Create early stop
         early_stopper = EarlyStopper(
@@ -230,15 +238,6 @@ class LSTMPipeline:
         """
         y_pred = self._model(x_val)  # pylint: disable=not-callable
         loss = self._loaders["criterion"](y_val, y_pred)
-        # Compute L1 and L2 regularization terms
-        l1_reg = sum(param.abs().sum() for param in self._model.parameters())
-        l2_reg = sum(param.pow(2).sum() for param in self._model.parameters())
-        # Add L1 and L2 regularization to the loss
-        loss = (
-            loss
-            + self._hyperparameters["lambda_l1"] * l1_reg
-            + self._hyperparameters["lambda_l2"] * l2_reg
-        )
         loss.backward()
         self._loaders["optimizer"].step()
         self._loaders["optimizer"].zero_grad()
@@ -275,15 +274,15 @@ class LSTMPipeline:
         """
         wandb.log(
             {
-                "training_loss": training_loss,
-                "validation_loss": validation_loss,
+                "training_loss": training_loss.item(),
+                "validation_loss": validation_loss.item(),
                 "epoch": epoch,
             },
             step=epoch,
         )
         print(
-            f"[{epoch+1}] Training loss: {training_loss:.4f}\t \
-                Validation loss: {validation_loss:.4f}"
+            f"[{epoch+1}] Training loss: {training_loss.item():.4f}\t"
+            f" Validation loss: {validation_loss.item():.4f}"
         )
 
     def _get_results_best_model(self, best_model, validation_loss):
@@ -351,8 +350,6 @@ class LSTMPipeline:
 
         # Creates matplot graph of actual data and model prediction
         def create_graph(i, pred, actual, variable, phase):
-            print(variable)
-            print(i)
             figure, axis = plt.subplots()
             x_axis = range(len(pred[:, i]))
             axis.plot(x_axis, pred[:, i])
@@ -364,11 +361,16 @@ class LSTMPipeline:
         # Creates plots for each feature
         # Each feature will have a plot that shows its predictions for
         # the train data and predictions for the test data
+        images = []
+
         for i, variable in enumerate(self._hyperparameters["variables"]):
             train_figure = create_graph(i, train_pred, y_train, variable, "Train")
             test_figure = create_graph(i, val_pred, y_test, variable, "Test")
-            table = wandb.Table(columns=["plot"])
-            table.add_data(wandb.Image(train_figure))
-            table.add_data(wandb.Image(test_figure))
 
-            wandb.log({f"{variable} Plots": table})
+            images.append(wandb.Image(train_figure, caption=f"{variable} - Train"))
+            images.append(wandb.Image(test_figure, caption=f"{variable} - Test"))
+
+            plt.close(train_figure)
+            plt.close(test_figure)
+
+        wandb.log({"Prediction Plots": images})

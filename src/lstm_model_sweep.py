@@ -5,13 +5,13 @@ Create an lstm model from a variable in a timeseries
 import pandas as pd
 import numpy as np
 
-from lstm_pipeline_module import LSTMPipeline
+from lstm_delta_pipeline_module import LSTMPipeline
 
 import wandb
 
 default_config = {
-    "epochs": 100,
-    "patience": 15,  # Number of epochs early stop will wait for for improvement in validation loss
+    "epochs": 200,
+    "patience": 8,  # Number of epochs early stop will wait for for improvement in validation loss
     "delta": 0.0005,  # Minimum number validation loss needs to improve by
     "dataset": "",
     "variables": [],
@@ -28,14 +28,15 @@ sweep_config = {
     "method": "random",  # "grid" will do all combinations while "random" will do random combinations. Set the count variable below for number of random runs.
     "metric": {"name": "validation_loss", "goal": "minimize"},
     "parameters": {
-        "batch_size": {"values": [64]},
-        "look_back": {"values": [30]},
-        "hidden": {"values": [192]},
+        "batch_size": {"values": [32, 48, 64, 96, 128]},
+        "look_back": {"values": [18, 20, 22, 25]},
+        "hidden": {"values": [128, 160, 192]},
         "layer": {"values": [1]},
-        "dropout": {"values": [0.15]},
-        "learning_rate": {"values": [0.0002]},
-        "lambda_l1": {"values": [0.0]},
-        "lambda_l2": {"values": [1e-6]},
+        "learning_rate": {
+            "distribution": "log_uniform_values",
+            "min": 1e-4,
+            "max": 8e-4,
+        },
     },
 }
 
@@ -52,7 +53,15 @@ def train(config):
         # Initialize the run.
         # Set mode to "disabled" if wandb does not need to be run. Helpful when only needed to test things
 
-        run = wandb.init(config=config, group="initial-sweep", mode="online")
+        run = wandb.init(
+            config=config,
+            group="simpleBiLSTM-sweep",
+            mode="online",
+            settings=wandb.Settings(
+                save_code=False,
+                disable_git=True,
+            ),
+        )
 
         # Set config to whatever parameters are chosen for this run based on the sweep_config
         config = wandb.config
@@ -61,16 +70,15 @@ def train(config):
         config.update(default_config)
 
         # Set run name
-        run_name = f'lstm-{config["look_back"]}, {config["hidden"]}, {config["layer"]}, {config["learning_rate"]}, {config["dropout"]}'
+        run_name = f'bilstm-{config["look_back"]}, {config["hidden"]}, {config["layer"]}, {config["learning_rate"]}'
         run.name = run_name
 
         # Get dataset
         timeseries = pd.read_csv(config["dataset"])
         df = pd.DataFrame(timeseries)
-        print(df)
 
         # Remove any commas in the data
-        df = df.applymap(lambda x: x.replace(",", "") if isinstance(x, str) else x)
+        df = df.map(lambda x: x.replace(",", "") if isinstance(x, str) else x)
         # # Remove any columns that contain mostly NA
         # df = df.dropna(thresh=len(df) - 10, axis=1)
         # Remove any rows that contain a null value
@@ -127,7 +135,9 @@ if sweep_config["method"] == "grid":
 
 for dataset in datasets:
     # Set sweep ID. New sweep ID for each set of data
-    sweep_id = wandb.sweep(sweep_config, project="aircraft-trajectory-lstm")
+    sweep_id = wandb.sweep(
+        sweep_config, project="aircraft-trajectory-simple-bilstm-delta"
+    )
     # Set dataset in config
     default_config["dataset"] = f"data/raw/{dataset}.csv"
     # Run the sweep
