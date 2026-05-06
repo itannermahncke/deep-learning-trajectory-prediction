@@ -220,7 +220,7 @@ These plots show the performance of the simple LSTM across all six state channel
 ![](images/results/lstm-lat.png) | ![](images/results/lstm-lon.png)
 ![](images/results/lstm-heading.png) | ![](images/results/lstm-velocity.png)
 ![](images/results/lstm-geoaltitude.png) | ![](images/results/lstm-baroaltitude.png)
-> **Fig N** Six plots comparing LSTM predictions to ground truth ADS-B data. The plots represent predictions and ground truth values of the following state variables: latitude, longitude, heading, velocity, geoaltitude, and baroaltitude.
+> **Fig 14** Six plots comparing LSTM predictions to ground truth ADS-B data. The plots represent predictions and ground truth values of the following state variables: latitude, longitude, heading, velocity, geoaltitude, and baroaltitude.
 
 Across all six state channels, the vanilla LSTM's predictions are somewhat poor. When the model is only making individual timestep predictions using ADS-B lookback data, it is generally able to estimate the correct sequence of state values, with the exception of latitude and longitude. However, when the model switches to forecasting trajectories over a time horizon, its performance worsens substantially. In every state variable aside from velocity, the model's forecast follows a quadratic arc with no precedent in the prior data. The model is even unable to just follow a constant linear sequence, as a non-learning kinematic model might. Overall, these results would not be viable for use in a safety-critical context.
 
@@ -233,7 +233,7 @@ These plots show the performance of the Bidirectional LSTM across all six state 
 ![](images/results/bilstm-lat.png) | ![](images/results/bilstm-lon.png)
 ![](images/results/bilstm-heading.png) | ![](images/results/bilstm-velocity.png)
 ![](images/results/bilstm-geoaltitude.png) | ![](images/results/bilstm-baroaltitude.png)
-> **Fig N** Six plots comparing BiLSTM predictions to ground truth ADS-B data. The plots represent predictions and ground truth values of the following state variables: latitude, longitude, heading, velocity, geoaltitude, and baroaltitude.
+> **Fig 15** Six plots comparing BiLSTM predictions to ground truth ADS-B data. The plots represent predictions and ground truth values of the following state variables: latitude, longitude, heading, velocity, geoaltitude, and baroaltitude.
 
 Across all six state channels, the BiLSTM's predictions do not show a substantial improvement from the vanilla LSTM's performance. The model does show relative improvement in the individual timestep predictions for latitude and longitude. However, the model still performs quite poorly when forecasting trajectories over a time horizon. The model's forecast continues to create quadratic arcs that do not follow the actual sequence of any state variables. The error seems to even be more substantial than that of the vanilla LSTM, particularly for longitude and heading. Overall, these results would also not be viable for use in a safety-critical context.
 
