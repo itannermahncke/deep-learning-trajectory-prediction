@@ -86,13 +86,55 @@ We also experimented with a delta variant where the model was fed absolute value
 
 ### Model Design Decisions
 
-We implemented and trained both a simple LSTM-based network and a BiLSTM-based network for this project. The networks each operate on six channels of input: latitude, longitude, velocity, heading, geoaltitude, and baroaltitude. The networks also each output a six-channel prediction representing the same state vector.
+We implemented and trained both an LSTM-based network and a BiLSTM-based network for this project. The networks each operate on six channels of input: latitude, longitude, velocity, heading, geoaltitude, and baroaltitude. The networks also each output a six-channel prediction representing the same state vector.
 
 Additionally, we designed both networks to be stateless, meaning that no memory was preserved between each lookback sequence. This was to prevent the models from overfitting to entire flights rather than learning to recognize common flight patterns across the dataset.
 
 For our model training, we ran sweeps over the following parameters: batch size, lookback length, hidden dimension size, number of layers, and learning rate. Loss was computed using Mean Absolute Error (MAE), which measures the average absolute difference between predicted and true values across all features and samples in a batch. In the absolute prediction model, the loss compares the predicted next state to the true next state. In the delta version, the loss instead compares the predicted change in state to the true change.
 
-### Refining Models With Parameter Sweeps
+### Refining Models with Parameter Sweeps
+
+#### Simple LSTM
+With our LSTM, we ran three parameter sweeps with each sweep narrowing down the values for each parameter. Below are the first parameter values and last parameter values we swept. Of note, for the LSTM sweeps we initially decided not to sweep batch size but for the BiLSTM training we chose to sweep batch size.
+
+First Sweep
+
+```
+"parameters": {
+    "batch_size": {"values": [64]},
+    "look_back": {"values": [20, 50, 100]},
+    "hidden": {"values": [32, 64, 128]},
+    "layer": {"values": [1, 2]},
+    "learning_rate": {"values": [0.0001, 0.0005, 0.001]},
+}
+```
+
+Third Sweep
+```
+"parameters": {
+    "batch_size": {"values": [64]},
+    "look_back": {"values": [20, 30, 50]},
+    "hidden": {"values": [192, 256, 320]},
+    "layer": {"values": [1]},
+    "learning_rate": {"values": [0.0002, 0.0003, 0.0004]},
+}
+```
+
+For our third sweep, we ran a total of 50 runs. Each run randomly picked parameter values from the provided parameter sweep values. Below are the results from the runs. The visual below shows the loss the run achieved and shows what parameters it ran with.
+
+<img src="images/methods/third-lstm-sweep-results.png" width="600">
+
+> **Fig 8** Visualization of the runs in the third LSTM parameter sweep. The first four axes represent the parameter values. Where a run's line intersects with the axis represents what parameter value was used. The validation loss axis shows what final loss the run achieved.
+
+Our best performing model achieved a final loss of 0.081 and best loss of 0.0731.
+
+<img src="images/methods/lstm-validation-loss.png" width="600">
+
+> **Fig 9** Plot of loss over steps/epochs for our simple LSTM. Loss is calculated with MAE.
+
+Its parameters were a batch size of 64, lookback of 30, hidden size of 192, layer amount of 1, and learning rate of 0.0002.
+
+#### Bidirectional LSTM
 
 For our BiLSTM, we ran a total of five parameter sweeps, narrowing down the values for each parameter depending on the sweep results. Below are the first parameter values we swept and the last parameter values we swept.
 
@@ -121,16 +163,23 @@ Fifth Sweep
     },
 },
 ```
-For our fifth sweep, we ran a total of 60 runs. Each run randomly picked parameter values from the provided parameter sweep values. Below are the results from the runs. The visual below shows the loss the run achieved and shows what parameters it ran with.
+For our fifth sweep, we ran a total of 60 runs. In this, the parameter values were also selected from the ones provided. Below are the results.
 
 <img src="images/methods/fifth-bilstm-sweep-results.png" width="600">
 
-> **Fig 8** Visualization of the runs in the fifth BiLSTM parameter sweep. The first four axes represent the parameter values. Where a run's line intersects with the axis represents what parameter value was used. The validation loss axis shows what final loss the run achieved.
+> **Fig 10** Visualization of the runs in the fifth BiLSTM parameter sweep. The first four axes represent the parameter values. Where a run's line intersects with the axis represents what parameter value was used. The validation loss axis shows what final loss the run achieved.
 
-Our best performing model achieved a final loss of 0.095 and lowest loss of 0.0828. Its parameter values were a batch size of 32, lookback of 22, hidden size of 192, layer amount of 1, and learning rate of 0.000143.
+Our best performing model achieved a final loss of 0.095 and lowest loss of 0.0828. 
 
-We also repeated the process for the delta variant of our BiLSTM. We ran one sweep with this model over the following parameters.
+<img src="images/methods/bilstm-validation-loss.png" width="600">
 
+> **Fig 11** Plot of loss over steps/epochs for our BiLSTM. Loss is calculated with MAE.
+
+Its parameter values were a batch size of 32, lookback of 22, hidden size of 192, layer amount of 1, and learning rate of ~0.0001.
+
+#### Delta BiLSTM
+
+We also repeated the process for the delta variant of our BiLSTM. We ran one sweep with this model over the following parameters. 
 ```
 "parameters": {
     "batch_size": {"values": [32, 48, 64, 96, 128]},
@@ -149,9 +198,15 @@ We ran a total of 50 runs where once more parameter values were randomly selecte
 
 <img src="images/methods/bilstm-delta-results.png" width="600">
 
-> **Fig 9** Visualization of the runs in the delta BiLSTM parameter sweep. The first four axes represent the parameter values. Where a run's line intersects with the axis represents what parameter value was used. The validation loss axis shows what final loss the run achieved.
+> **Fig 12** Visualization of the runs in the delta BiLSTM parameter sweep. The first four axes represent the parameter values. Where a run's line intersects with the axis represents what parameter value was used. The validation loss axis shows what final loss the run achieved.
 
-Our best performing model achieved a loss of 0.0224. Its parameters were a batch size of 32, lookback of 25, hidden size of 192, layer amount of 1, and learning rate of 0.0004.
+Our best performing model achieved a loss of 0.022. 
+
+<img src="images/methods/bilstm-delta-validation-loss.png" width="600">
+
+> **Fig 13** Plot of loss over steps/epochs for our delta BiLSTM. Loss is calculated with MAE.
+
+Its parameters were a batch size of 32, lookback of 25, hidden size of 192, layer amount of 1, and learning rate of ~0.0004.
 
 ## Model Performance Comparison Results
 
