@@ -1,5 +1,5 @@
 # Aircraft Flight Trajectory Prediction With Sequential Deep Learning
-> Ivy Mahncke and Lily Wei
+> Ivy Mahncke and Lily Wei \
 > Machine Learning S26
 
 ## Project Overview
